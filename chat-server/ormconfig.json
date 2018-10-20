@@ -1,0 +1,10 @@
+{
+    "type": "pg",
+    "host": "localhost",
+    "port": "5432",
+    "username": "dev",
+    "password": "dev",
+    "database": "devdb",
+    "entities": ["src/entity/*.js"],
+    "logging": true
+}

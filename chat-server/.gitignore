@@ -1,0 +1,5 @@
+node_modules
+build
+npm-degub.log
+.env
+.DS_Store
