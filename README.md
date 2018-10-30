@@ -14,8 +14,8 @@ The frontend client uses Angular 6 using Socket.io-client.
 
 ### Chat-Server
 The backend server and RESTful API is implemented with:
-* Express v4
-* Socket.io
-* TypeScript
-* TypeORM
-* Postgres
+* [Express v4](https://expressjs.com/)
+* [Socket.io](https://socket.io/)
+* [TypeScript](https://www.typescriptlang.org/)
+* [TypeORM](http://typeorm.io/#/)
+* [Postgres](https://www.postgresql.org/)
