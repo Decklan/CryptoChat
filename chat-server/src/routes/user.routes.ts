@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import { getConnection } from 'typeorm';
 
+// BCrypt for password hashing
+import * as bcrypt from 'bcrypt';
+
 // Import model
 import { User } from '../../build/entity/User';
 
