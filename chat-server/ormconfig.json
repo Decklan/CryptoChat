@@ -1,10 +1,11 @@
 {
-    "type": "pg",
+    "type": "postgres",
     "host": "localhost",
     "port": "5432",
-    "username": "dev",
-    "password": "dev",
-    "database": "devdb",
-    "entities": ["src/entity/*.js"],
-    "logging": true
+    "username": "postgres",
+    "password": "password",
+    "database": "chatdb",
+    "entities": ["build/entity/*.js"],
+    "logging": true,
+    "synchronize": true
 }

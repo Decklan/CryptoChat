@@ -1,47 +1,50 @@
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import { createConnection } from 'typeorm';
+import "reflect-metadata";
 
-// Import controllers
-import { UserController } from './controllers';
+// Import user route handlers
+import { 
+    CreateNewUser, 
+    GetActiveUsers,
+    GetUserByUsername,
+    UpdateUser, 
+    RemoveUserById
+} from './routes/user.routes';
 
-/**
- * Set up the express application
- *  - For some reason using the typescript import style 
- *    for this doesn't work so I'm sticking with the require
- *    style for now
- */
+const PORT = process.env.PORT || 8081;
 const express = require('express');
-const app = express();
 
-/**
- * Setup the various middlewares used in the application
- *  * bodyParser creates a body in the request containing
- *    any json data sent to the server in the request
- *  * cors middleware allows cross origin resource sharing
- *    so that, during development, you don't run into 500
- *    server errors when requesting resources from a different
- *    origin than the server (eg. localhost:4200 for Angular)
- */
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(cors({
-    origin: 'http://localhost:4200'
-}));
+createConnection().then(() => {
+    const app = express();
 
-/**
- * Mount each of the controllers to a specified route
- * Doing it this way will allow for better architecture by
- * separating all of the route/API logic to each of the 
- * various controllers that will be used rather than having
- * one big file full of http verbs to different routes. 
- */
-app.use('/users', UserController);
+    /**
+     * Setup the various middlewares used in the application
+     *  * bodyParser creates a body in the request containing
+     *    any json data sent to the server in the request
+     *  * cors middleware allows cross origin resource sharing
+     *    so that, during development, you don't run into 500
+     *    server errors when requesting resources from a different
+     *    origin than the server (eg. localhost:4200 for Angular)
+     */
+    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(bodyParser.json());
+    app.use(cors({
+        origin: 'http://localhost:4200'
+    }));
 
-// PORT
-const PORT = process.env.PORT || 8080;
+    /**
+     * Routes to perform user CRUD operations
+     */
+    app.post('/users', CreateNewUser);
+    app.get('/users/active', GetActiveUsers);
+    app.get('/users/:username', GetUserByUsername);
+    app.post('/users/update', UpdateUser);
+    app.delete('/users/:id', RemoveUserById);
 
-// Listen on PORT
-app.listen(PORT, () => {
-    console.log(`Application is now listening on port: ${PORT}`);
+    // Listen on PORT
+    app.listen(PORT, () => {
+        console.log(`Application is now listening on port: ${PORT}`);
+    });
+
 });
