@@ -42,18 +42,47 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  // Get username and password and sanitize values before login
   login() {
-    const username = this.loginForm.controls['username'].value;
-    const password = this.loginForm.controls['password'].value;
+    let username = this.loginForm.controls['username'].value;
+    let password = this.loginForm.controls['password'].value;
 
-    this.userService.login(username, password);
+    username = this.sanitizeInput(username);
+    password = this.sanitizeInput(password);
+    if (username === "" || password === "") {
+      this.loginForm.reset();
+    } else {
+      this.loginForm.reset();
+      this.userService.login(username, password);
+    }
   }
 
+  // Get username and password and sanitize values before account creation
   createAccount() {
-    const username = this.createForm.controls['username'].value;
-    const password = this.createForm.controls['password'].value;
+    let username = this.createForm.controls['username'].value;
+    let password = this.createForm.controls['password'].value;
 
-    this.userService.createAccount(username, password);
+    username = this.sanitizeInput(username);
+    password = this.sanitizeInput(password);
+
+    if (username === "" || password === "") {
+      this.createForm.reset();
+    } else {
+      this.createForm.reset();
+      this.userService.createAccount(username, password);
+    }
+  }
+
+  // Strip whitespace from input for sanitation purposes to avoid bad input
+  sanitizeInput(input: string): string {
+    return input.trim();
+  }
+
+  /**
+   * Check to see that passwords actually match
+   */
+  passwordMatch() {
+    return !(this.createForm.controls['password'].value === this.createForm.controls['confirm'].value);
   }
 
 }

@@ -37,7 +37,7 @@
                         <label for="confirm">Confirm password</label>
                         <input type="password" class="form-control" formControlName="confirm" placeholder="Confirm password">
                     </div>
-                    <button type="button" class="btn btn-block btn-outline-success" [disabled]="createForm.invalid"
+                    <button type="button" class="btn btn-block btn-outline-success" [disabled]="createForm.invalid || passwordMatch()"
                         (click)="createAccount()">
                         Create Account
                     </button>
