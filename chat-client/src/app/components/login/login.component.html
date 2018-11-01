@@ -1,3 +1,48 @@
-<div class="container-fluid" id="login">
+<div class="container-fluid" id="login-component">
+    <h3 class="display-3 text-white text-center mb-5">
+        <b><i>{{ welcome }}</i></b>
+    </h3>
 
+    <div class="container-fluid" id="forms">
+        <div class="row">
+            <div class="col-sm-6">
+                <h4 class="text-center text-white">Login</h4>
+                <form [formGroup]="loginForm" class="pl-5 pr-5 pb-5 pt-2" id="login-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" formControlName="username" placeholder="Username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" formControlName="password" placeholder="Password">
+                    </div>
+                    <button type="button" class="btn btn-block btn-outline-primary" [disabled]="loginForm.invalid"
+                        (click)="login()">
+                        Login
+                    </button>
+                </form>
+            </div>
+            <div class="col-sm-6">
+                <h4 class="text-center text-white">Don't have an account?</h4>
+                <form [formGroup]="createForm" class="pl-5 pr-5 pb-5 pt-2" id="create-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" formControlName="username" placeholder="Username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" formControlName="password" placeholder="Password">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm">Confirm password</label>
+                        <input type="password" class="form-control" formControlName="confirm" placeholder="Confirm password">
+                    </div>
+                    <button type="button" class="btn btn-block btn-outline-success" [disabled]="createForm.invalid"
+                        (click)="createAccount()">
+                        Create Account
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
