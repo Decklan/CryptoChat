@@ -6,32 +6,49 @@ import * as bcrypt from 'bcrypt';
 
 // Import model
 import { User } from '../../build/entity/User';
+import { UserResource } from '../resources/UserResource';
+
+// For salting purposes
+const saltRounds = 10;
 
 /**
  * Creates a new user and adds them to the database
  * @param req The user info we want to create a user with
  * @param res Response to the client with the newly created user
- * @returns The newly created user from the database
+ * @returns The newly created user as a resource from the database
  */
 export function CreateNewUser(req: Request, res: Response) {
     const userRepository = getConnection().getRepository(User);
 
-    let newUser = new User();
-    newUser.userName = req.body.userName;
-    newUser.hashedPassword = req.body.hashedPassword;
-    newUser.salt = req.body.salt;
-    newUser.isActive = req.body.isActive;
+    bcrypt.hash(req.body.password, saltRounds)
+    .then((hash) => {
+        let newUser = new User();
+        newUser.userName = req.body.username;
+        newUser.hashedPassword = hash;
+        newUser.isActive = true;
 
-    // Should check to ensure the body contains information (even though forms will ensure this)
-
-    // Should actually hash the password and generate a salt
-
-    userRepository.save(newUser)
-        .then((user) => {
-            res.send(user);
-        }).catch((err) => {
-            console.log('There was an issue saving the user');
+        userRepository.save(newUser)
+        .then((user: User) => {
+            let resource = new UserResource();
+            resource.id = user.id;
+            resource.userName = user.userName;
+            resource.isActive = user.isActive;
+            res.send(resource);
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(500);
+            res.send({
+                error: 'There was an issue creating the new user.'
+            });
+        })
+    }).catch((err) => {
+        console.log(err);
+        res.status(500);
+        res.send({
+            error: 'There was an issue during password creation.'
         });
+    });
 }
 
 /**
@@ -46,9 +63,20 @@ export function GetActiveUsers(req: Request, res: Response) {
     userRepository.find({
         where: { isActive: true }
     })
-    .then((activeUsers) => {
-        // Should set additional headers in here
-        res.send(activeUsers);
+    .then((activeUsers: User[]) => {
+        // Convert each user to a resource
+        let activeResources = [];
+
+        for (let active of activeUsers) {
+            let resource = new UserResource();
+            resource.id = active.id;
+            resource.userName = active.userName;
+            resource.isActive = active.isActive;
+
+            activeResources.push(resource);
+        }
+
+        res.send(activeResources);
     })
     .catch((err) => {
         console.log(err);
@@ -62,19 +90,26 @@ export function GetActiveUsers(req: Request, res: Response) {
  * @returns The user matching the given username
  */
 export function GetUserByUsername(req: Request, res: Response) {
-    console.log(req.params.username);
     const userRepository = getConnection().getRepository(User);
 
     userRepository.findOne({
         where: { userName: req.params.username }   
     })
-    .then((user) => {
+    .then((user: User) => {
         // Should set additional headers for successful response
-        res.send(user);
+        let fetchedUser = new UserResource();
+        fetchedUser.id = user.id;
+        fetchedUser.userName = user.userName;
+        fetchedUser.isActive = user.isActive;
+
+        res.status(200);
+        res.send(fetchedUser);
     })
     .catch((err) => {
-        // Should check the error to provide meaningful response to the client
-        console.log(err);
+        res.status(err.statusCode);
+        res.send({
+            error: err.message
+        });
     });
 }
 
@@ -88,14 +123,20 @@ export function UpdateUser(req: Request, res: Response) {
     const userRepository = getConnection().getRepository(User);
 
     userRepository.findOne({
-        where: { userName: req.body.userName }
+        where: { userName: req.body.userName } // userName could be issue
     })
     .then((user: User) => {
         user.userName = req.body.userName;
         user.hashedPassword = req.body.hashedPassword;
         user.isActive = req.body.isActive;
-        userRepository.save(user);
-        res.send(user);
+        userRepository.save(user)
+        .then((updatedUser: User) => {
+            let updated = new UserResource();
+            updated.id = updatedUser.id;
+            updated.userName = updatedUser.userName;
+            updated.isActive = updatedUser.isActive;
+            res.send(updated);
+        });
     })
     .catch((err) => {
         console.log(err);
@@ -122,6 +163,51 @@ export function RemoveUserById(req: Request, res: Response) {
     .catch((err) => {
         console.log(err);
     })
+}
+
+/**
+ * Handles checking the user's password when they log in. 
+ * @param req Request containing the username and password for the user logging in
+ * @param res Response sends the UserResource if login is successful
+ * @returns The UserResource for the user if login was successful else nothing
+ */
+export function Login(req: Request, res: Response) {
+    const userRepository = getConnection().getRepository(User);
+
+    userRepository.findOne({
+        where: { userName: req.body.username }
+    })
+    .then((user: User) => {
+        bcrypt.compare(req.body.password, user.hashedPassword)
+        .then((response) => {
+            if (response === true) {
+                let userResource = new UserResource();
+                userResource.id = user.id;
+                userResource.userName = user.userName;
+                userResource.isActive = true;
+
+                res.status(200);
+                res.send(userResource);
+            } else {
+                res.status(500);
+                res.send({
+                    error: 'The password you entered does not match our records.'
+                });
+            }
+        })
+        .catch((err) => {
+            res.status(err.statusCode);
+            res.send({
+                error: 'There were issue checking the password.'
+            })
+        });
+    })
+    .catch((err) => {
+        res.status(err.statusCode);
+        res.send({
+            error: 'There were issues logging in.'
+        });
+    });
 }
 
 

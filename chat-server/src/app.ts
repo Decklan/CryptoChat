@@ -9,7 +9,8 @@ import {
     GetActiveUsers,
     GetUserByUsername,
     UpdateUser, 
-    RemoveUserById
+    RemoveUserById,
+    Login
 } from './routes/user.routes';
 
 const PORT = process.env.PORT || 8081;
@@ -35,12 +36,18 @@ createConnection().then(() => {
 
     /**
      * Routes to perform user CRUD operations
+     * All routes working
      */
-    app.post('/users', CreateNewUser);
-    app.get('/users/active', GetActiveUsers);
-    app.get('/users/:username', GetUserByUsername);
-    app.post('/users/update', UpdateUser);
-    app.delete('/users/:id', RemoveUserById);
+    app.post('/api/users', CreateNewUser);
+    app.post('/api/users/login', Login);
+    app.get('/api/users/active', GetActiveUsers);
+    app.get('/api/users/:username', GetUserByUsername);
+    app.post('/api/users/update', UpdateUser);
+    app.delete('/api/users/:id', RemoveUserById);
+
+    /**
+     * Routes to perform room CRUD operations
+     */
 
     // Listen on PORT
     app.listen(PORT, () => {
