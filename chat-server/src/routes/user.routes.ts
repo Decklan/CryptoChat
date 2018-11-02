@@ -33,6 +33,7 @@ export function CreateNewUser(req: Request, res: Response) {
             resource.id = user.id;
             resource.userName = user.userName;
             resource.isActive = user.isActive;
+            res.status(200);
             res.send(resource);
         })
         .catch((err) => {
