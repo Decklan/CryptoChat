@@ -2,7 +2,7 @@ import { environment } from './../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { User } from '../models/User';
 
 @Injectable({
@@ -29,6 +29,7 @@ export class UserService {
     this.http.post(endpoint, login)
     .subscribe((user: User) => {
       this.currentUser = user;
+      localStorage.setItem('username', this.currentUser.userName);
       this.router.navigate(['/lobby']);
     }, (err) => { console.log(err) });
   }
@@ -59,9 +60,9 @@ export class UserService {
    * Returns an observable containing users who are currently active
    * on the site
    */
-  getActiveUsers(): Observable<User> {
+  getActiveUsers(): Observable<User[]> {
     const endpoint = `${environment.serverBase}${this.apiBase}/active`;
-    return this.http.get<User>(endpoint);
+    return this.http.get<User[]>(endpoint);
   }
 
   /**
@@ -72,6 +73,13 @@ export class UserService {
   updateUser(user: User): Observable<User> {
     const endpoint = `${environment.serverBase}${this.apiBase}/update`;
     return this.http.post<User>(endpoint, user);
+  }
+
+  /**
+   * Retrieve the currently logged in user from service
+   */
+  getCurrentUser() {
+    return this.currentUser;
   }
 
 }
