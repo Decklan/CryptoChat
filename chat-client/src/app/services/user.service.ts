@@ -1,12 +1,16 @@
+import { environment } from './../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { User } from '../models/User';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   private apiBase: string = 'api/users';
+  private currentUser: User;
 
   constructor(private http: HttpClient,
     private router: Router) { }
@@ -18,14 +22,56 @@ export class UserService {
    * @param password The unhashed password for the account being requested
    */
   login(username: string, password: string) {
-    console.log(username, password);
     const login = { username, password };
+    const endpoint = `${environment.serverBase}${this.apiBase}/login`;
 
     // Make call to server
+    this.http.post(endpoint, login)
+    .subscribe((user: User) => {
+      this.currentUser = user;
+      this.router.navigate(['/lobby']);
+    }, (err) => { console.log(err) });
   }
 
+  /**
+   * Sends a request to the sever to create a new user
+   * @param username The username for the new user
+   * @param password The password for the new user
+   * @returns An Observable containing the newly created user
+   */
   createAccount(username: string, password: string) {
-    console.log(username, password);
+    const endpoint = `${environment.serverBase}${this.apiBase}`;
+    let newUser = {
+      username: username,
+      password: password
+    };
+
+    this.http.post<User>(endpoint, newUser)
+    .subscribe((user: User) => {
+      this.currentUser = user;
+      this.router.navigate(['/lobby']);
+    }, (err) => {
+      console.log(err);
+    });
+  }
+
+  /**
+   * Returns an observable containing users who are currently active
+   * on the site
+   */
+  getActiveUsers(): Observable<User> {
+    const endpoint = `${environment.serverBase}${this.apiBase}/active`;
+    return this.http.get<User>(endpoint);
+  }
+
+  /**
+   * Updates a user's information in the database
+   * @param user The user to update in the database
+   * @returns Observable containing the user we updated
+   */
+  updateUser(user: User): Observable<User> {
+    const endpoint = `${environment.serverBase}${this.apiBase}/update`;
+    return this.http.post<User>(endpoint, user);
   }
 
 }
