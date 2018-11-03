@@ -14,6 +14,12 @@ import {
 } from './routes/user.routes';
 
 // Import room route handlers
+import { 
+    CreateRoom,
+    RemoveRoomById,
+    GetAllRooms,
+    GetUserRooms 
+} from './routes/room.routes';
 
 const PORT = process.env.PORT || 8081;
 const express = require('express');
@@ -50,6 +56,10 @@ createConnection().then(() => {
     /**
      * Routes to perform room CRUD operations
      */
+    app.post('/api/rooms', CreateRoom); // Create a room
+    app.get('/api/rooms', GetAllRooms); // Fetch all rooms
+    app.get('/api/rooms/:id', GetUserRooms) // Fetch rooms by user id
+    app.delete('/api/rooms/:id', RemoveRoomById); // Remove a room
 
     // Listen on PORT
     app.listen(PORT, () => {
