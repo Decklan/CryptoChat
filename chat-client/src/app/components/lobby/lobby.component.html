@@ -8,8 +8,10 @@
       <hr>
 
       <ul class="list-group" *ngIf="rooms">
-        <li class="list-group-item" *ngFor="let room of rooms">
-          {{ room.roomName }}
+        <li class="list-group-item room" *ngFor="let room of rooms">
+          <h4 class="text-primary" routerLink="/room" (click)="setRoom(room)">
+            {{ room.roomName }}
+          </h4>
         </li>
       </ul>
     </div>

@@ -14,6 +14,7 @@ export class RoomService {
   private apiBase: string = 'api/rooms';
   private roomsSubject: BehaviorSubject<Room[]>;
   private roomsObservable: Observable<Room[]>;
+  private room: Room;
 
   constructor(private http: HttpClient) { 
     this.roomsSubject = new BehaviorSubject([]);
@@ -35,6 +36,23 @@ export class RoomService {
    */
   getAllRooms(): Observable<Room[]> {
     return this.roomsObservable;
+  }
+
+  /**
+   * Set the room the user is entering
+   * @param room The room we are entering
+   */
+  setRoom(room: Room) {
+    this.room = room;
+  }
+
+  /**
+   * Done this way so we don't have to fetch the room from the server
+   * since we already have it in the room component
+   * @returns The room the user is entering
+   */
+  getRoom() {
+    return this.room;
   }
 
   /**
