@@ -26,6 +26,8 @@ const express = require('express');
 
 createConnection().then(() => {
     const app = express();
+    const server = require('http').Server(app);
+    const io = require('socket.io')(server);
 
     /**
      * Setup the various middlewares used in the application
@@ -62,8 +64,20 @@ createConnection().then(() => {
     app.delete('/api/rooms/:id', RemoveRoomById); // Remove a room
 
     // Listen on PORT
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
         console.log(`Application is now listening on port: ${PORT}`);
     });
+
+    io.on('connection', (socket) => {
+        console.log('A user has connected.');
+
+        socket.on('message', (data) => {
+            socket.emit('message', data);
+        });
+
+        socket.on('disconnect', () => {
+            console.log('A user has disconnected.')
+        })
+    })
 
 });
