@@ -9,7 +9,7 @@
 
       <ul class="list-group" *ngIf="rooms">
         <li class="list-group-item room" *ngFor="let room of rooms">
-          <h4 class="text-primary" routerLink="/room" (click)="setRoom(room)">
+          <h4 class="text-primary" routerLink="/room/{{room.id}}">
             {{ room.roomName }}
           </h4>
         </li>

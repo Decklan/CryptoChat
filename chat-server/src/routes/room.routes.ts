@@ -38,6 +38,36 @@ export function CreateRoom(req: Request, res: Response) {
 }
 
 /**
+ * Fetches a single room by it's unique id
+ * @param req Request from the server for a room matching param id
+ * @param res Response containing the room that we are requestion from the server
+ * @returns The room matching the given id we requested
+ */
+export function GetRoomById(req: Request, res: Response) {
+    const roomRepository = getConnection().getRepository(Room);
+
+    roomRepository.findOne({
+        where: { id: req.params.id }
+    })
+    .then((room: Room) => {
+        let resource = new RoomResource();
+        resource.id = room.id;
+        resource.ownerId = room.ownerId;
+        resource.roomName = room.roomName;
+        resource.isPrivate = room.isPrivate;
+
+        res.status(200);
+        res.send(resource);
+    })
+    .catch((err) => {
+        res.status(err.statusCode);
+        res.send({
+            error: 'There was an issue fetching the room you requested.'
+        })
+    });
+}
+
+/**
  * Fetches all rooms from the database
  * @param req Request for all rooms from the database
  * @param res Response containing all the rooms in the database

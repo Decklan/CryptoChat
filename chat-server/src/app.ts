@@ -16,8 +16,9 @@ import {
 // Import room route handlers
 import { 
     CreateRoom,
-    RemoveRoomById,
-    GetAllRooms
+    GetRoomById,
+    GetAllRooms,
+    RemoveRoomById
 } from './routes/room.routes';
 
 const PORT = process.env.PORT || 8081;
@@ -57,6 +58,7 @@ createConnection().then(() => {
      */
     app.post('/api/rooms', CreateRoom); // Create a room
     app.get('/api/rooms', GetAllRooms); // Fetch all rooms
+    app.get('/api/rooms/:id', GetRoomById); // Get a room by it's ID
     app.delete('/api/rooms/:id', RemoveRoomById); // Remove a room
 
     // Listen on PORT

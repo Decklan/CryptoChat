@@ -39,6 +39,16 @@ export class RoomService {
   }
 
   /**
+   * Fetches a single room by its unique ID
+   * @param id The id of the room we are requesting
+   * @returns An observable containin the room we requested
+   */
+  getRoomById(id: number): Observable<Room> {
+    const endpoint = `${environment.serverBase}${this.apiBase}/${id}`;
+    return this.http.get<Room>(endpoint);
+  }
+
+  /**
    * Set the room the user is entering
    * @param room The room we are entering
    */
