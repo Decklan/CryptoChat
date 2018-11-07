@@ -72,7 +72,7 @@ createConnection().then(() => {
         console.log('A user has connected.');
 
         socket.on('message', (data) => {
-            socket.emit('message', data);
+            io.emit('message', data);
         });
 
         socket.on('disconnect', () => {

@@ -49,23 +49,6 @@ export class RoomService {
   }
 
   /**
-   * Set the room the user is entering
-   * @param room The room we are entering
-   */
-  setRoom(room: Room) {
-    this.room = room;
-  }
-
-  /**
-   * Done this way so we don't have to fetch the room from the server
-   * since we already have it in the room component
-   * @returns The room the user is entering
-   */
-  getRoom() {
-    return this.room;
-  }
-
-  /**
    * Sends a new room to create to the server
    * @param room The new room to create in the database
    * @returns The newly created room

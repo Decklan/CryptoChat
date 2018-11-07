@@ -24,8 +24,8 @@ export class LobbyComponent implements OnInit {
     });
   }
 
-  setRoom(room: Room) {
-    this.roomService.setRoom(room);
-  }
+  // setRoom(room: Room) {
+  //   this.roomService.setRoom(room);
+  // }
 
 }
