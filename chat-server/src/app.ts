@@ -70,11 +70,21 @@ createConnection().then(() => {
 
     io.on('connection', (socket) => {
         console.log('A user has connected.');
+        // Stores the roomId that the socket has joined
+        let roomId;
 
-        socket.on('message', (data) => {
-            io.emit('message', data);
+        // Join a chat room by its unique id
+        socket.on('join', (room) => {
+            roomId = room;
+            socket.join(roomId);
         });
 
+        // Receive and emit a message to sockets in a specific room
+        socket.on('message', (data) => {
+            io.sockets.in(roomId).emit('message', data);
+        });
+
+        // When a user disconnects
         socket.on('disconnect', () => {
             console.log('A user has disconnected.')
         })

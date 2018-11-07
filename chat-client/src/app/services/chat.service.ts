@@ -41,4 +41,9 @@ export class ChatService {
   sendMessage(message: Message) {
     this.socket.emit('message', message);
   }
+
+  // Join a specific room number by emitting the join event to the server
+  joinRoom(id: number) {
+    this.socket.emit('join', id);
+  }
 }

@@ -69,7 +69,13 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.roomService.getRoomById(this.id)
     .subscribe((room: Room) => {
       this.room = room;
+      this.joinRoom();
     });
+  }
+
+  // Join the specific room to receive chat only for that room
+  joinRoom() {
+    this.chatService.joinRoom(this.room.id);
   }
 
   /**
