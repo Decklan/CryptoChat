@@ -78,6 +78,11 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.chatService.joinRoom(this.room.id);
   }
 
+  // Leave the room you are currently in
+  leaveRoom() {
+    this.chatService.leaveRoom(this.room.id);
+  }
+
   /**
    * Sending a message involves capturing the input from the form
    * and then creating a message from it and then calling the chatService
@@ -95,10 +100,11 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Unsubscribe from the observable when the component is destroy to 
+   * Unsubscribe from the observable when the component is destroyed to 
    * kill the connection to the socket.
    */
   ngOnDestroy() {
+    this.leaveRoom();
     this.subscription.unsubscribe();
   }
 

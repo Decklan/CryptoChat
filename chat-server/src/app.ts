@@ -1,5 +1,6 @@
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
+import * as jwt from 'jsonwebtoken';
 import { createConnection } from 'typeorm';
 import "reflect-metadata";
 
@@ -28,6 +29,9 @@ createConnection().then(() => {
     const app = express();
     const server = require('http').Server(app);
     const io = require('socket.io')(server);
+
+    // Set secret for signing... should put somewhere better
+    app.set('secret', 'supersecret');
 
     /**
      * Setup the various middlewares used in the application
@@ -77,6 +81,11 @@ createConnection().then(() => {
         socket.on('join', (room) => {
             roomId = room;
             socket.join(roomId);
+        });
+
+        // When leaving a chat room
+        socket.on('leave', () => {
+            socket.leave(roomId);
         });
 
         // Receive and emit a message to sockets in a specific room

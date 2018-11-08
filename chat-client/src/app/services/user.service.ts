@@ -10,7 +10,7 @@ import { User } from '../models/User';
 })
 export class UserService {
   private apiBase: string = 'api/users';
-  private currentUser: User;
+  public currentUser: User;
 
   constructor(private http: HttpClient,
     private router: Router) { }
@@ -57,6 +57,15 @@ export class UserService {
   }
 
   /**
+   * Retrieves a user by their username
+   * @param username The username for the user we want to fetch
+   */
+  getUserByUsername(username: string) {
+    const endpoint = `${environment.serverBase}${this.apiBase}/${username}`;
+    return this.http.get<User>(endpoint);
+  }
+
+  /**
    * Returns an observable containing users who are currently active
    * on the site
    */
@@ -73,13 +82,6 @@ export class UserService {
   updateUser(user: User): Observable<User> {
     const endpoint = `${environment.serverBase}${this.apiBase}/update`;
     return this.http.post<User>(endpoint, user);
-  }
-
-  /**
-   * Retrieve the currently logged in user from service
-   */
-  getCurrentUser() {
-    return this.currentUser;
   }
 
 }

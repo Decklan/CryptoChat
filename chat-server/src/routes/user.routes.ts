@@ -127,8 +127,8 @@ export function UpdateUser(req: Request, res: Response) {
         where: { userName: req.body.userName } // userName could be issue
     })
     .then((user: User) => {
+        user.id = req.body.id;
         user.userName = req.body.userName;
-        user.hashedPassword = req.body.hashedPassword;
         user.isActive = req.body.isActive;
         userRepository.save(user)
         .then((updatedUser: User) => {
@@ -182,13 +182,23 @@ export function Login(req: Request, res: Response) {
         bcrypt.compare(req.body.password, user.hashedPassword)
         .then((response) => {
             if (response === true) {
-                let userResource = new UserResource();
-                userResource.id = user.id;
-                userResource.userName = user.userName;
-                userResource.isActive = true;
-
-                res.status(200);
-                res.send(userResource);
+                user.isActive = true;
+                userRepository.save(user)
+                .then((user: User) => {
+                    let userResource = new UserResource();
+                    userResource.id = user.id;
+                    userResource.userName = user.userName;
+                    userResource.isActive = true;
+    
+                    res.status(200);
+                    res.send(userResource);
+                })
+                .catch((err) => {
+                    res.status(err.statusCode);
+                    res.send({
+                        error: 'There were issues updating the user active status.'
+                    });
+                });
             } else {
                 res.status(500);
                 res.send({

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/models/User';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,15 +13,26 @@ export class SidebarComponent implements OnInit {
   public activeUsers: User[];
   public currentUser: User;
 
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService,
+    private router: Router) { }
 
   ngOnInit() {
     this.getCurrentUser();
     this.getActiveUsers();
   }
 
+  /**
+   * Get the currently logged in user
+   */
   getCurrentUser() {
-    this.currentUser = this.userService.getCurrentUser();
+    if (this.userService.currentUser)
+      this.currentUser = this.userService.currentUser;
+    else {
+      this.userService.getUserByUsername(localStorage.getItem('username'))
+      .subscribe((user: User) => {
+        this.currentUser = user;
+      }, (err) => { console.log(err) });
+    }
   }
 
   /**
@@ -38,6 +50,15 @@ export class SidebarComponent implements OnInit {
   */
   getUserName() {
     return this.currentUser ? this.currentUser.userName : localStorage.getItem('username');
+  }
+
+  logout() {
+    this.currentUser.isActive = false;
+    this.userService.updateUser(this.currentUser)
+    .subscribe((user: User) => {
+      console.log(user);
+      this.router.navigate(['/']);
+    });
   }
 
 }

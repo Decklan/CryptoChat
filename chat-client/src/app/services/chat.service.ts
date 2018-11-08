@@ -46,4 +46,9 @@ export class ChatService {
   joinRoom(id: number) {
     this.socket.emit('join', id);
   }
+
+  // Leave the room that the user is currently in
+  leaveRoom(id: number) {
+    this.socket.emit('leave', id);
+  }
 }
