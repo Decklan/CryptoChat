@@ -22,8 +22,8 @@ export class UserService {
    * @param password The unhashed password for the account being requested
    */
   login(username: string, password: string) {
+    const endpoint: string = `${environment.serverBase}${this.apiBase}/login`;
     const login = { username, password };
-    const endpoint = `${environment.serverBase}${this.apiBase}/login`;
 
     // Make call to server
     this.http.post(endpoint, login)
@@ -41,7 +41,7 @@ export class UserService {
    * @returns An Observable containing the newly created user
    */
   createAccount(username: string, password: string) {
-    const endpoint = `${environment.serverBase}${this.apiBase}`;
+    const endpoint: string = `${environment.serverBase}${this.apiBase}`;
     let newUser = {
       username: username,
       password: password
@@ -57,21 +57,21 @@ export class UserService {
   }
 
   /**
-   * Retrieves a user by their username
-   * @param username The username for the user we want to fetch
-   */
-  getUserByUsername(username: string) {
-    const endpoint = `${environment.serverBase}${this.apiBase}/${username}`;
-    return this.http.get<User>(endpoint);
-  }
-
-  /**
    * Returns an observable containing users who are currently active
    * on the site
    */
   getActiveUsers(): Observable<User[]> {
-    const endpoint = `${environment.serverBase}${this.apiBase}/active`;
+    const endpoint: string = `${environment.serverBase}${this.apiBase}/active`;
     return this.http.get<User[]>(endpoint);
+  }
+
+  /**
+   * Retrieves a user by their username
+   * @param username The username for the user we want to fetch
+   */
+  getUserByUsername(username: string) {
+    const endpoint: string = `${environment.serverBase}${this.apiBase}/${username}`;
+    return this.http.get<User>(endpoint);
   }
 
   /**
@@ -80,8 +80,18 @@ export class UserService {
    * @returns Observable containing the user we updated
    */
   updateUser(user: User): Observable<User> {
-    const endpoint = `${environment.serverBase}${this.apiBase}/update`;
+    const endpoint: string = `${environment.serverBase}${this.apiBase}/update`;
     return this.http.post<User>(endpoint, user);
+  }
+
+  /**
+   * Removes a user's account from the database when they want to delete their
+   * account
+   * @param user The user to remove from the database (current user)
+   */
+  removeUser(user: User) {
+    const endpoint: string = `${environment.serverBase}${this.apiBase}/${user.id}`;
+    return this.http.delete<User>(endpoint);
   }
 
 }

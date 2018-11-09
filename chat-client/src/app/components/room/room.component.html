@@ -23,7 +23,7 @@
                 <textarea type="text" class="form-control" formControlName="messageText" placeholder="Enter your message"></textarea>
               </div>
               <div class="col-2">
-                <button type="button" class="btn btn-primary" [disabled]="messageForm.invalid"
+                <button type="button" class="btn btn-primary send" [disabled]="messageForm.invalid"
                   (click)="sendMessage()">
                   Send
                 </button>

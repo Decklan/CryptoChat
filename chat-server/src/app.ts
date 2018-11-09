@@ -1,6 +1,5 @@
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
-import * as jwt from 'jsonwebtoken';
 import { createConnection } from 'typeorm';
 import "reflect-metadata";
 
@@ -30,9 +29,6 @@ createConnection().then(() => {
     const server = require('http').Server(app);
     const io = require('socket.io')(server);
 
-    // Set secret for signing... should put somewhere better
-    app.set('secret', 'supersecret');
-
     /**
      * Setup the various middlewares used in the application
      *  * bodyParser creates a body in the request containing
@@ -52,8 +48,8 @@ createConnection().then(() => {
      * Routes to perform user CRUD operations
      * All routes working
      */
-    app.post('/api/users', CreateNewUser);
     app.post('/api/users/login', Login);
+    app.post('/api/users', CreateNewUser);
     app.get('/api/users/active', GetActiveUsers);
     app.get('/api/users/:username', GetUserByUsername);
     app.post('/api/users/update', UpdateUser);
@@ -85,6 +81,7 @@ createConnection().then(() => {
 
         // When leaving a chat room
         socket.on('leave', () => {
+            console.log(`Leaving ${roomId}`);
             socket.leave(roomId);
         });
 

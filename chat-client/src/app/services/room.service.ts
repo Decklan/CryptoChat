@@ -32,6 +32,16 @@ export class RoomService {
   }
 
   /**
+   * Sends a new room to create to the server
+   * @param room The new room to create in the database
+   * @returns The newly created room
+   */
+  createNewRoom(room: Room): Observable<Room> {
+    const endpoint: string = `${environment.serverBase}${this.apiBase}`;
+    return this.http.post<Room>(endpoint, room);
+  }
+
+  /**
    * Return the observable of rooms
    */
   getAllRooms(): Observable<Room[]> {
@@ -49,13 +59,12 @@ export class RoomService {
   }
 
   /**
-   * Sends a new room to create to the server
-   * @param room The new room to create in the database
-   * @returns The newly created room
+   * Removes a room by its unique id from the database
+   * @param id The id of the room that we want to delete
    */
-  createNewRoom(room: Room): Observable<Room> {
-    const endpoint: string = `${environment.serverBase}${this.apiBase}`;
-    return this.http.post<Room>(endpoint, room);
+  removeRoomById(id: number) {
+    const endpoint: string = `${environment.serverBase}${this.apiBase}/${id}`;
+    return this.http.delete<Room>(endpoint);
   }
 
   /**

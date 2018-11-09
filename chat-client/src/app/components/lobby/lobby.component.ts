@@ -4,6 +4,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Room } from 'src/app/models/Room';
 import { RoomService } from 'src/app/services/room.service';
 import { UserService } from 'src/app/services/user.service';
+import { User } from 'src/app/models/User';
 
 @Component({
   selector: 'app-lobby',
@@ -17,14 +18,11 @@ export class LobbyComponent implements OnInit {
   constructor(private roomService: RoomService,
     private userService: UserService) { }
 
+  /**
+    * Handle component logic before presentation to the user
+    */
   ngOnInit() {
-    this.roomService.getAllRooms()
-    .subscribe((rooms: Room[]) => {
-      this.rooms = rooms;
-    }, (err) => {
-      console.log(err);
-    });
-
+    this.getAllRooms();
     this.roomForm = new FormGroup({
       roomName: new FormControl(null, [
         Validators.required,
@@ -40,7 +38,7 @@ export class LobbyComponent implements OnInit {
    */
   createRoom() {
     // Get the currently logged in user
-    let user = this.userService.currentUser;
+    let user: User = this.userService.currentUser;
 
     // Grab the room info from the form
     let roomName = this.roomForm.controls['roomName'].value;
@@ -64,6 +62,32 @@ export class LobbyComponent implements OnInit {
     });
   }
 
+  /**
+   * Get all rooms from the database
+   */
+  getAllRooms() {
+    this.roomService.getAllRooms()
+    .subscribe((rooms: Room[]) => {
+      this.rooms = rooms;
+    }, (err) => {
+      console.log(err);
+    });
+  }
+
+  /**
+   * Removes a room by its id
+   * @param id The id of the room we are removing
+   */
+  removeRoom(id: number) {
+    this.roomService.removeRoomById(id)
+    .subscribe((data) => {
+      this.roomService.updateObservableState(this.rooms); // Update the list of rooms
+    }, (err) => { console.log(err) });
+  }
+
+  /**
+   * Clear all the form data when cancelling/submitting form data
+   */
   clear() {
     this.roomForm.reset();
   }
