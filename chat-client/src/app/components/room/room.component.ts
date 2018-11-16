@@ -23,7 +23,7 @@ export class RoomComponent implements OnInit, OnDestroy {
    * subscription - Observable subscription to sub/unsub to/from
    */
   private id: number;
-  public room: Room;
+  public currentRoom: Room;
   private subscription;
   
   // Form to capture message input
@@ -63,24 +63,30 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Retrieve the information about the current room that we are in
+   * Rather than fetch the room by its ID from the server, get all
+   * of the rooms from the observable that already has each room and
+   * match against the id that was passed as a route param.
    */
   getRoom() {
-    this.roomService.getRoomById(this.id)
-    .subscribe((room: Room) => {
-      this.room = room;
-      this.joinRoom();
-    });
+    this.roomService.getAllRooms()
+    .subscribe((rooms: Room[]) => {
+      for (let room of rooms) {
+        if (room.id === this.id) {
+          this.currentRoom = room;
+          this.joinRoom();
+        }
+      }
+    }, (err) => { console.log(err) })
   }
 
   // Join the specific room to receive chat only for that room
   joinRoom() {
-    this.chatService.joinRoom(this.room.id);
+    this.chatService.joinRoom(this.currentRoom.id);
   }
 
   // Leave the room you are currently in
   leaveRoom() {
-    this.chatService.leaveRoom(this.room.id);
+    this.chatService.leaveRoom(this.currentRoom.id);
   }
 
   /**
@@ -92,7 +98,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     let text = this.messageForm.controls['messageText'].value;
 
     let message: Message = new Message();
-    message.from = 'Anon';
+    message.from = localStorage.getItem('username');
     message.messageText = text;
 
     this.messageForm.reset();
