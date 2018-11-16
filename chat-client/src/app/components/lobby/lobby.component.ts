@@ -13,6 +13,7 @@ import { User } from 'src/app/models/User';
 })
 export class LobbyComponent implements OnInit {
   public rooms: Room[];
+  public activeUsers: User[];
   public roomForm: FormGroup;
 
   constructor(private roomService: RoomService,
@@ -23,6 +24,7 @@ export class LobbyComponent implements OnInit {
     */
   ngOnInit() {
     this.getAllRooms();
+    this.getActiveUsers();
     this.roomForm = new FormGroup({
       roomName: new FormControl(null, [
         Validators.required,
@@ -82,6 +84,17 @@ export class LobbyComponent implements OnInit {
     this.roomService.removeRoomById(id)
     .subscribe((data) => {
       this.roomService.updateObservableState(this.rooms); // Update the list of rooms
+    }, (err) => { console.log(err) });
+  }
+
+  /**
+   * Get all users who are currently logged in to the application
+   */
+  getActiveUsers() {
+    this.userService.getActiveUsers()
+    .subscribe((users: User[]) => {
+      this.activeUsers = users;
+      console.log(this.activeUsers);
     }, (err) => { console.log(err) });
   }
 

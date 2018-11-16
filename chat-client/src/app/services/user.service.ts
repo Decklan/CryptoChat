@@ -2,7 +2,8 @@ import { environment } from './../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, Subject } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
+
 import { User } from '../models/User';
 
 @Injectable({
@@ -12,8 +13,40 @@ export class UserService {
   private apiBase: string = 'api/users';
   public currentUser: User;
 
+  private usersSubject: BehaviorSubject<User[]>;
+  private usersObservable: Observable<User[]>;
+
   constructor(private http: HttpClient,
-    private router: Router) { }
+    private router: Router) { 
+      this.usersSubject = new BehaviorSubject([]);
+      this.usersObservable = this.usersSubject.asObservable();
+
+      this.usersObservable = this.fetchActiveUsers();
+  }
+
+  /**
+   * Fetch the currently active users from the database
+   */
+  fetchActiveUsers(): Observable<User[]> {
+    const endpoint: string = `${environment.serverBase}${this.apiBase}/active`;
+    return this.http.get<User[]>(endpoint);
+  }
+
+  /**
+   * Return the usersObservable to the caller
+   */
+  getActiveUsers(): Observable<User[]> {
+    return this.usersObservable;
+  }
+
+  /**
+   * Retrieves a user by their username
+   * @param username The username for the user we want to fetch
+   */
+  getUserByUsername(username: string) {
+    const endpoint: string = `${environment.serverBase}${this.apiBase}/${username}`;
+    return this.http.get<User>(endpoint);
+  }
 
   /**
    * Given a username and a password, requests the user's account 
@@ -57,24 +90,6 @@ export class UserService {
   }
 
   /**
-   * Returns an observable containing users who are currently active
-   * on the site
-   */
-  getActiveUsers(): Observable<User[]> {
-    const endpoint: string = `${environment.serverBase}${this.apiBase}/active`;
-    return this.http.get<User[]>(endpoint);
-  }
-
-  /**
-   * Retrieves a user by their username
-   * @param username The username for the user we want to fetch
-   */
-  getUserByUsername(username: string) {
-    const endpoint: string = `${environment.serverBase}${this.apiBase}/${username}`;
-    return this.http.get<User>(endpoint);
-  }
-
-  /**
    * Updates a user's information in the database
    * @param user The user to update in the database
    * @returns Observable containing the user we updated
@@ -92,6 +107,14 @@ export class UserService {
   removeUser(user: User) {
     const endpoint: string = `${environment.serverBase}${this.apiBase}/${user.id}`;
     return this.http.delete<User>(endpoint);
+  }
+
+  /**
+   * Updates the list of users with a new value
+   * @param users The next value of users to update the observable with
+   */
+  updateObservableState(users: User[]) {
+    this.usersSubject.next(users);
   }
 
 }

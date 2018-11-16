@@ -1,0 +1,8 @@
+<h4 class="display-4 text-primary text-center">Active Users</h4>
+<hr>
+
+<ul class="list-group" *ngIf="users">
+  <li class="list-group-item" *ngFor="let user of users">
+    {{ user.userName }}
+  </li>
+</ul>

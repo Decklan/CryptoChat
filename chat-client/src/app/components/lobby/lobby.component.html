@@ -1,9 +1,11 @@
 <div class="container-fluid pl-0" id="lobby-container">
+  <h4 class="display-4 text-primary text-center">Lobby</h4>
+  <hr>
   <div class="row">
-    <div class="col-md-2">
-      <app-sidebar></app-sidebar>
+    <div class="col-md-3">
+      <app-user-list [users]="activeUsers"></app-user-list>
     </div>
-    <div class="col-md-10 pl-0">
+    <div class="col-md-9 pl-0">
       <div class="row">
         <div class="col-10">
           <h4 class="display-4 text-primary text-center">Rooms</h4>
