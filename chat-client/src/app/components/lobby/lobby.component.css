@@ -6,3 +6,7 @@
 .room:hover {
     cursor: pointer;
 }
+
+.add {
+    height: 100%;
+}

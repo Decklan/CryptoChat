@@ -1,21 +1,22 @@
 <div class="container-fluid pl-0" id="lobby-container">
-  <h4 class="display-4 text-primary text-center">Lobby</h4>
+  <div class="row">
+    <div class="col-10">
+        <h4 class="display-4 text-primary text-center">Lobby</h4>
+    </div>
+    <div class="col-2">
+      <button type="button" class="btn btn-sm btn-block btn-success mt-2 mb-2 add"
+        data-toggle="modal" data-target="#roomModal">
+        <b>New Room</b>
+      </button>
+    </div>
+  </div>
   <hr>
   <div class="row">
     <div class="col-md-3">
       <app-user-list [users]="activeUsers"></app-user-list>
     </div>
     <div class="col-md-9 pl-0">
-      <div class="row">
-        <div class="col-10">
-          <h4 class="display-4 text-primary text-center">Rooms</h4>
-        </div>
-        <div class="col-2">
-          <button type="button" class="btn btn-success mt-4" data-toggle="modal" data-target="#roomModal">
-            New Room
-          </button>
-        </div>
-      </div>
+      <h4 class="display-4 text-primary text-center">Rooms</h4>
       <hr>
 
       <ul class="list-group" *ngIf="rooms">

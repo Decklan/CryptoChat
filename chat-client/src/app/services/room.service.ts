@@ -14,7 +14,6 @@ export class RoomService {
   private apiBase: string = 'api/rooms';
   private roomsSubject: BehaviorSubject<Room[]>;
   private roomsObservable: Observable<Room[]>;
-  private room: Room;
 
   constructor(private http: HttpClient) { 
     this.roomsSubject = new BehaviorSubject([]);

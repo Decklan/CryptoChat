@@ -94,7 +94,6 @@ export class LobbyComponent implements OnInit {
     this.userService.getActiveUsers()
     .subscribe((users: User[]) => {
       this.activeUsers = users;
-      console.log(this.activeUsers);
     }, (err) => { console.log(err) });
   }
 
