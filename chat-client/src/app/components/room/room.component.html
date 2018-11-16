@@ -1,3 +1,39 @@
-<p>
-  room works!
-</p>
+<div class="container-fluid pl-0" id="room-container">
+  <div class="row">
+    <div class="col-md-3">
+      <app-user-list [users]=""></app-user-list>
+    </div>
+    <div class="col-md-9 pl-0" *ngIf="currentRoom" id="chat">
+      <h4 class="display-4 text-primary text-center">{{ currentRoom.roomName }}</h4>
+      <hr>
+
+      <div class="message-log">
+        <ul class="list-group-flush">
+          <li *ngFor="let message of messages" class="list-group-item">
+            <p class="lead" *ngIf="message">{{ message.from }}</p>
+            <p *ngIf="message">{{ message.messageText }}</p>
+          </li>
+        </ul>
+      </div>
+
+      <div class="message-input">
+        <hr class="mb-2">
+        <form [formGroup]="messageForm" class="ml-2">
+          <div class="form-group">
+            <div class="row">
+              <div class="col">
+                <textarea type="text" class="form-control" formControlName="messageText" placeholder="Enter your message"></textarea>
+              </div>
+              <div class="col-2">
+                <button type="button" class="btn btn-primary send" [disabled]="messageForm.invalid"
+                  (click)="sendMessage()">
+                  Send
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -16,10 +16,6 @@ export class User {
     @Column()
     hashedPassword: string;
 
-    // Unique salt added to the unhashed password
-    @Column()
-    salt: string;
-
     // Flag to show if the user is active or not
     @Column()
     isActive: boolean;

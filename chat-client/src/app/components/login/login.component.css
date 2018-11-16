@@ -1,0 +1,22 @@
+#login-component {
+    width: 100%;
+    height: 100vh;
+    background-color: #347cef;
+    border-bottom: 10vh;
+    border-bottom-style: solid;
+    border-bottom-left-radius: 15%;
+    border-bottom-right-radius: 15%;
+    border-bottom-color: white;
+}
+
+#forms {
+    width: 500px;
+}
+
+#login-form {
+    width: 500px;
+}
+
+#create-form {
+    width: 500px;
+}

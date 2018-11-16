@@ -1,15 +1,117 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+
+// Models
+import { Message } from 'src/app/models/Message';
+import { Room } from 'src/app/models/Room';
+
+// Services
+import { RoomService } from 'src/app/services/room.service';
+import { ChatService } from './../../services/chat.service';
+
 
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
   styleUrls: ['./room.component.css']
 })
-export class RoomComponent implements OnInit {
+export class RoomComponent implements OnInit, OnDestroy {
+  /**
+   * id - The id of the room we are loading from the server
+   * room - Stores the room loaded from the server
+   * subscription - Observable subscription to sub/unsub to/from
+   */
+  private id: number;
+  public currentRoom: Room;
+  private subscription;
+  
+  // Form to capture message input
+  public messageForm: FormGroup;
 
-  constructor() { }
+  // Array to store messages in
+  public messages: Message[] = [];
 
+  constructor(private roomService: RoomService,
+    private chatService: ChatService,
+    private route: ActivatedRoute) { 
+      this.route.params.subscribe(p => {
+        this.id = +p['id'];
+      });
+  }
+
+  /**
+   * Handle any logic that needs to be accomplished right before
+   * presenting the view to the user.
+   */
   ngOnInit() {
+    this.getRoom();
+
+    // Create the message from and its controls
+    this.messageForm = new FormGroup({
+      messageText: new FormControl(null, [
+        Validators.required,
+        Validators.minLength(2)
+      ])
+    });
+
+    // Subscribe to the messaging observable to receive messages
+    this.subscription = this.chatService.getMessages()
+    .subscribe((message: Message) => {
+      this.messages.push(message);
+    });
+  }
+
+  /**
+   * Rather than fetch the room by its ID from the server, get all
+   * of the rooms from the observable that already has each room and
+   * match against the id that was passed as a route param.
+   */
+  getRoom() {
+    this.roomService.getAllRooms()
+    .subscribe((rooms: Room[]) => {
+      for (let room of rooms) {
+        if (room.id === this.id) {
+          this.currentRoom = room;
+          this.joinRoom();
+        }
+      }
+    }, (err) => { console.log(err) })
+  }
+
+  // Join the specific room to receive chat only for that room
+  joinRoom() {
+    this.chatService.joinRoom(this.currentRoom.id);
+  }
+
+  // Leave the room you are currently in
+  leaveRoom() {
+    this.chatService.leaveRoom(this.currentRoom.id);
+  }
+
+  /**
+   * Sending a message involves capturing the input from the form
+   * and then creating a message from it and then calling the chatService
+   * to send the message.
+   */
+  sendMessage() {
+    let text = this.messageForm.controls['messageText'].value;
+
+    let message: Message = new Message();
+    message.from = localStorage.getItem('username');
+    message.messageText = text;
+
+    this.messageForm.reset();
+    this.chatService.sendMessage(message);
+  }
+
+  /**
+   * Unsubscribe from the observable when the component is destroyed to 
+   * kill the connection to the socket.
+   */
+  ngOnDestroy() {
+    this.leaveRoom();
+    this.subscription.unsubscribe();
   }
 
 }

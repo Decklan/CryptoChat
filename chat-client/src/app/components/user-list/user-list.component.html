@@ -1,0 +1,14 @@
+<h4 class="display-4 text-primary text-center">
+  <a data-toggle="collapse" href="#userCollapse">Active Users</a>
+</h4>
+<hr class="ml-2">
+
+<div id="userCollapse">
+  <ul class="list-group ml-2" *ngIf="users">
+    <li class="list-group-item bg-secondary bg-light" *ngFor="let user of users">
+      <a href="#" class="nav-link text-primary">
+        <b>{{ user.userName }}</b>
+      </a>
+    </li>
+  </ul>
+</div>
