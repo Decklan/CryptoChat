@@ -8,7 +8,6 @@ import { LoginComponent } from './components/login/login.component';
 import { RoomComponent } from './components/room/room.component';
 import { AppRoutingModule } from './app-routing.module';
 import { LobbyComponent } from './components/lobby/lobby.component';
-import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { UserListComponent } from './components/user-list/user-list.component';
 
 @NgModule({
@@ -17,7 +16,6 @@ import { UserListComponent } from './components/user-list/user-list.component';
     LoginComponent,
     RoomComponent,
     LobbyComponent,
-    SidebarComponent,
     UserListComponent
   ],
   imports: [
