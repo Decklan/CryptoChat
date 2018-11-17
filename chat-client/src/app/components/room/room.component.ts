@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 // Models
 import { Message } from 'src/app/models/Message';
@@ -9,7 +10,8 @@ import { Room } from 'src/app/models/Room';
 // Services
 import { RoomService } from 'src/app/services/room.service';
 import { ChatService } from './../../services/chat.service';
-
+import { UserService } from 'src/app/services/user.service';
+import { User } from 'src/app/models/User';
 
 @Component({
   selector: 'app-room',
@@ -24,6 +26,7 @@ export class RoomComponent implements OnInit, OnDestroy {
    */
   private id: number;
   public currentRoom: Room;
+  public roomMembers: User[] = [];
   private subscription;
   
   // Form to capture message input
@@ -34,6 +37,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   constructor(private roomService: RoomService,
     private chatService: ChatService,
+    private userService: UserService,
     private route: ActivatedRoute) { 
       this.route.params.subscribe(p => {
         this.id = +p['id'];
@@ -97,8 +101,10 @@ export class RoomComponent implements OnInit, OnDestroy {
   sendMessage() {
     let text = this.messageForm.controls['messageText'].value;
 
+    let user: User = JSON.parse(localStorage.getItem('user'));
+
     let message: Message = new Message();
-    message.from = localStorage.getItem('username');
+    message.from = user.userName;
     message.messageText = text;
 
     this.messageForm.reset();

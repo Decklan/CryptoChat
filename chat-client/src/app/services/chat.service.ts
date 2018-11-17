@@ -15,7 +15,7 @@ export class ChatService {
 
   /**
    * Get the latest messages as an observable stream that can be 
-   * subscribed/unsubscribed from in the room.
+   * subscribed/unsubscribed to/from in the room.
    */
   getMessages() {
     // Create the observable/observer (to push new messages to)

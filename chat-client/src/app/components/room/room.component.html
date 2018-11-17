@@ -1,7 +1,7 @@
 <div class="container-fluid pl-0" id="room-container">
   <div class="row">
     <div class="col-md-3">
-      <app-user-list [users]=""></app-user-list>
+      <app-user-list [users]="roomMembers"></app-user-list>
     </div>
     <div class="col-md-9 pl-0" *ngIf="currentRoom" id="chat">
       <h4 class="display-4 text-primary text-center">{{ currentRoom.roomName }}</h4>

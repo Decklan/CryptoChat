@@ -1,9 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
-import { Room } from 'src/app/models/Room';
+// Services
 import { RoomService } from 'src/app/services/room.service';
 import { UserService } from 'src/app/services/user.service';
+
+// Models
+import { Room } from 'src/app/models/Room';
 import { User } from 'src/app/models/User';
 
 @Component({
@@ -11,13 +16,27 @@ import { User } from 'src/app/models/User';
   templateUrl: './lobby.component.html',
   styleUrls: ['./lobby.component.css']
 })
-export class LobbyComponent implements OnInit {
+export class LobbyComponent implements OnInit, OnDestroy {
+  /**
+   * rooms       - All the rooms retrieved from the database
+   * activeUsers - All the users retrieved from the database 
+   *               who are currently logged in to the app
+   * currentUser - The user currently logged in to the app
+   * roomForm    - Form for collecting room info when creating a
+   *               new room
+   */
   public rooms: Room[];
   public activeUsers: User[];
+  public currentUser: User;
   public roomForm: FormGroup;
 
+  // Subscriptions to the various observables used
+  private roomSubscription: Subscription;
+  private activeUserSubscription: Subscription;
+
   constructor(private roomService: RoomService,
-    private userService: UserService) { }
+    private userService: UserService,
+    private router: Router) { }
 
   /**
     * Handle component logic before presentation to the user
@@ -25,6 +44,8 @@ export class LobbyComponent implements OnInit {
   ngOnInit() {
     this.getAllRooms();
     this.getActiveUsers();
+    this.getCurrentUser();
+
     this.roomForm = new FormGroup({
       roomName: new FormControl(null, [
         Validators.required,
@@ -35,17 +56,22 @@ export class LobbyComponent implements OnInit {
   }
 
   /**
+   * When the component gets destroyed
+   */
+  ngOnDestroy() {
+    this.roomSubscription.unsubscribe();
+    this.activeUserSubscription.unsubscribe();
+  }
+
+  /**
    * Creates a new room and sends it to the server then updates the observable state
    * with the newly created room on successful creation
    */
   createRoom() {
-    // Get the currently logged in user
-    let user: User = this.userService.currentUser;
-
     // Grab the room info from the form
     let roomName = this.roomForm.controls['roomName'].value;
     let isPrivate = this.roomForm.controls['private'].value;
-    let ownerId = user.id;
+    let ownerId = this.currentUser.id;
 
     // Create a model out of the form info
     let newRoom = new Room();
@@ -53,8 +79,10 @@ export class LobbyComponent implements OnInit {
     newRoom.isPrivate = isPrivate;
     newRoom.ownerId = ownerId;
 
+    // Clear form input fields
     this.clear();
 
+    // Create the new room
     this.roomService.createNewRoom(newRoom)
     .subscribe((createdRoom: Room) => {
       this.rooms.push(createdRoom);
@@ -65,10 +93,11 @@ export class LobbyComponent implements OnInit {
   }
 
   /**
-   * Get all rooms from the database
+   * Call the roomService getAllRooms() method to get all the 
+   * available rooms in the application
    */
   getAllRooms() {
-    this.roomService.getAllRooms()
+    this.roomSubscription = this.roomService.getAllRooms()
     .subscribe((rooms: Room[]) => {
       this.rooms = rooms;
     }, (err) => {
@@ -91,9 +120,28 @@ export class LobbyComponent implements OnInit {
    * Get all users who are currently logged in to the application
    */
   getActiveUsers() {
-    this.userService.getActiveUsers()
+    this.activeUserSubscription = this.userService.getActiveUsers()
     .subscribe((users: User[]) => {
       this.activeUsers = users;
+    }, (err) => { console.log(err) });
+  }
+
+  /**
+   * Get the currently logged in user
+   */
+  getCurrentUser() {
+    this.currentUser = this.userService.getCurrentUser();
+  }
+
+  /**
+   * Log the current user out of the application
+   */
+  logout() {
+    this.currentUser.isActive = false;
+    this.userService.updateUser(this.currentUser)
+    .subscribe((user: User) => {
+      localStorage.removeItem('user');
+      this.router.navigate(['/']);
     }, (err) => { console.log(err) });
   }
 
