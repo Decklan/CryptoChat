@@ -71,18 +71,19 @@ createConnection().then(() => {
     io.on('connection', (socket) => {
         console.log('A user has connected.');
         // Stores the roomId that the socket has joined
-        let roomId;
+        let roomId: number;
 
         // Join a chat room by its unique id
-        socket.on('join', (room) => {
-            roomId = room;
+        socket.on('join', (member) => {
+            roomId = member.roomId;
             socket.join(roomId);
+            io.emit('join', member);
         });
 
         // When leaving a chat room
-        socket.on('leave', () => {
-            console.log(`Leaving ${roomId}`);
+        socket.on('leave', (member) => {
             socket.leave(roomId);
+            io.emit('leave', member);
         });
 
         // Receive and emit a message to sockets in a specific room

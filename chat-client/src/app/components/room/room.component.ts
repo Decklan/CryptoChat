@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
 
 // Models
 import { Message } from 'src/app/models/Message';
@@ -12,6 +11,7 @@ import { RoomService } from 'src/app/services/room.service';
 import { ChatService } from './../../services/chat.service';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/models/User';
+import { Member } from 'src/app/services/chat.service';
 
 @Component({
   selector: 'app-room',
@@ -50,6 +50,7 @@ export class RoomComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
     this.getRoom();
+    this.getMembers();
 
     // Create the message from and its controls
     this.messageForm = new FormGroup({
@@ -83,14 +84,29 @@ export class RoomComponent implements OnInit, OnDestroy {
     }, (err) => { console.log(err) })
   }
 
+  /**
+   * Get the list of members in the current room
+   */
+  getMembers() {
+    this.chatService.getRoomMembers()
+    .subscribe((members: Member[]) => {
+      for (let member of members) {
+        if (member.roomId === this.id)
+          this.roomMembers.push(member.user)
+      }
+    }, (err) => { console.log(err) });
+  }
+
   // Join the specific room to receive chat only for that room
   joinRoom() {
-    this.chatService.joinRoom(this.currentRoom.id);
+    let user: User = JSON.parse(localStorage.getItem('user'));
+    this.chatService.joinRoom(this.currentRoom.id, user);
   }
 
   // Leave the room you are currently in
   leaveRoom() {
-    this.chatService.leaveRoom(this.currentRoom.id);
+    let user: User = JSON.parse(localStorage.getItem('user'));
+    this.chatService.leaveRoom(this.currentRoom.id, user);
   }
 
   /**
