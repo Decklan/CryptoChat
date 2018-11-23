@@ -26,8 +26,9 @@ export class RoomComponent implements OnInit, OnDestroy {
    */
   private id: number;
   public currentRoom: Room;
-  public roomMembers: User[] = [];
-  private subscription;
+  public roomMembers: Member[] = [];
+  private messageSubscription;
+  private memberSubscription;
   
   // Form to capture message input
   public messageForm: FormGroup;
@@ -37,7 +38,6 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   constructor(private roomService: RoomService,
     private chatService: ChatService,
-    private userService: UserService,
     private route: ActivatedRoute) { 
       this.route.params.subscribe(p => {
         this.id = +p['id'];
@@ -61,7 +61,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     });
 
     // Subscribe to the messaging observable to receive messages
-    this.subscription = this.chatService.getMessages()
+    this.messageSubscription = this.chatService.getMessages()
     .subscribe((message: Message) => {
       this.messages.push(message);
     });
@@ -75,6 +75,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   getRoom() {
     this.roomService.getAllRooms()
     .subscribe((rooms: Room[]) => {
+      console.log('RoomComponent: getRoom() called.');
       for (let room of rooms) {
         if (room.id === this.id) {
           this.currentRoom = room;
@@ -88,23 +89,23 @@ export class RoomComponent implements OnInit, OnDestroy {
    * Get the list of members in the current room
    */
   getMembers() {
-    this.chatService.getRoomMembers()
+    this.memberSubscription = this.chatService.getRoomMembers()
     .subscribe((members: Member[]) => {
-      for (let member of members) {
-        if (member.roomId === this.id)
-          this.roomMembers.push(member.user)
-      }
+      console.log('RoomComponent: getMembers() called.');
+      this.roomMembers = members;
     }, (err) => { console.log(err) });
   }
 
   // Join the specific room to receive chat only for that room
   joinRoom() {
+    console.log('RoomComponent: joinRoom() called.');
     let user: User = JSON.parse(localStorage.getItem('user'));
     this.chatService.joinRoom(this.currentRoom.id, user);
   }
 
   // Leave the room you are currently in
   leaveRoom() {
+    console.log('RoomComponent: leaveRoom() called.');
     let user: User = JSON.parse(localStorage.getItem('user'));
     this.chatService.leaveRoom(this.currentRoom.id, user);
   }
@@ -133,7 +134,8 @@ export class RoomComponent implements OnInit, OnDestroy {
    */
   ngOnDestroy() {
     this.leaveRoom();
-    this.subscription.unsubscribe();
+    this.messageSubscription.unsubscribe();
+    this.memberSubscription.unsubscribe();
   }
 
 }

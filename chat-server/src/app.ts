@@ -21,6 +21,9 @@ import {
     RemoveRoomById
 } from './routes/room.routes';
 
+// Models
+import { RoomMember } from './models/RoomMember';
+
 const PORT = process.env.PORT || 8081;
 const express = require('express');
 
@@ -68,22 +71,48 @@ createConnection().then(() => {
         console.log(`Application is now listening on port: ${PORT}`);
     });
 
+    /**
+     * Store the list of users and the rooms they are in on the server
+     * so it can be appropriately emitted back to the client
+     */
+    let members: RoomMember[] = [];
+
     io.on('connection', (socket) => {
         console.log('A user has connected.');
         // Stores the roomId that the socket has joined
         let roomId: number;
 
         // Join a chat room by its unique id
-        socket.on('join', (member) => {
+        socket.on('join', (member: RoomMember) => {
+            // Set the global roomId and join the room
             roomId = member.roomId;
             socket.join(roomId);
-            io.emit('join', member);
+            console.log('Server: join event received. Joining ', roomId);
+
+            // Add member pairing to members array
+            members.push(member);
+
+            // Emit the list of members back to the client
+            io.emit('memberJoin', members);
         });
 
         // When leaving a chat room
-        socket.on('leave', (member) => {
+        socket.on('leave', (member: RoomMember) => {
             socket.leave(roomId);
-            io.emit('leave', member);
+            console.log('Server: leave event received. Leaving ', roomId);
+            roomId = null;
+            console.log('Server: roomId now', roomId);
+
+            // Remove the member from the array of users in room
+            let i: number;
+            for (i = 0; i < members.length; i++) {
+                if (member.user.id === members[i].user.id) {
+                    members.splice(i, 1);
+                }
+            }
+
+            // Emit the list of members back to the client
+            io.emit('memberLeave', members);
         });
 
         // Receive and emit a message to sockets in a specific room

@@ -50,24 +50,16 @@ export class ChatService {
        * On the join event emitted from the server, update the list of 
        * users in the room.
        */
-      this.socket.on('join', (memberData) => {
-        this.members.push(memberData);
-        observer.next(this.members);
+      this.socket.on('memberJoin', (memberData) => {
+        observer.next(memberData);
       });
 
       /**
        * On the leave event emitted from the server, update the list of
        * users in the room
        */
-      this.socket.on('leave', (memberData) => {
-        // Remove the member from the list
-        let i:number;
-        for (i = 0; i < this.members.length; i++) {
-          if (this.members[i].user.id === memberData.user.id)
-            this.members.splice(i,1);
-        }
-
-        observer.next(this.members);
+      this.socket.on('memberLeave', (memberData) => {
+        observer.next(memberData);
       });
 
       return() => { this.socket.disconnect() }
@@ -81,11 +73,13 @@ export class ChatService {
    * Send a message by emitting the message event to the server
    */
   sendMessage(message: Message) {
+    console.log('ChatService: sendMessage() called.');
     this.socket.emit('message', message);
   }
 
   // Join a specific room number by emitting the join event to the server
   joinRoom(id: number, user: User) {
+    console.log('ChatService: joinRoom() called.');
     let member = new Member();
     member.roomId = id;
     member.user = user;
@@ -94,6 +88,7 @@ export class ChatService {
 
   // Leave the room that the user is currently in
   leaveRoom(id: number, user: User) {
+    console.log('ChatService: leaveRoom() called.');
     let member = new Member();
     member.roomId = id;
     member.user = user;

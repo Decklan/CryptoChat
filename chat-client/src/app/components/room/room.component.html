@@ -1,7 +1,13 @@
 <div class="container-fluid pl-0" id="room-container">
   <div class="row">
     <div class="col-md-3">
-      <app-user-list [users]="roomMembers"></app-user-list>
+      <ul class="list-group" *ngIf="roomMembers">
+        <li class="list-group-item" *ngFor="let member of roomMembers">
+          <h4 class="lead" *ngIf="member.roomId === currentRoom.id"> 
+            {{ member.user.userName }} 
+          </h4>
+        </li>
+      </ul>
     </div>
     <div class="col-md-9 pl-0" *ngIf="currentRoom" id="chat">
       <h4 class="display-4 text-primary text-center">{{ currentRoom.roomName }}</h4>
