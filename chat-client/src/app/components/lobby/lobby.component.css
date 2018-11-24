@@ -1,6 +1,6 @@
 #lobby-container {
     width: 100%;
-    height: 100vh;
+    height: 95vh;
 }
 
 .room:hover {
@@ -9,4 +9,8 @@
 
 .add {
     height: 100%;
+}
+
+.users {
+    height: 95vh;
 }

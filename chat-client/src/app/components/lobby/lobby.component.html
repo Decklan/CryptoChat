@@ -1,28 +1,33 @@
 <div class="container-fluid pl-0" id="lobby-container">
   <div class="row">
-    <div class="col-2">
-      <button type="button" class="btn btn-sm btn-block btn-danger mt-2 mb-2 ml-2 add"
-        (click)="logout()">
-        <b>Logout</b>
-      </button>
-    </div>
-    <div class="col-8">
-        <h4 class="display-4 text-primary text-center">Lobby</h4>
-    </div>
-    <div class="col-2">
-      <button type="button" class="btn btn-sm btn-block btn-success mt-2 mb-2 add"
-        data-toggle="modal" data-target="#roomModal">
-        <b>New Room</b>
-      </button>
-    </div>
-  </div>
-  <hr>
-  <div class="row">
-    <div class="col-md-3">
+
+    <div class="col-md-2 bg-primary users">
       <app-user-list [users]="activeUsers"></app-user-list>
     </div>
-    <div class="col-md-9 pl-0">
-      <h4 class="display-4 text-primary text-center">Rooms</h4>
+
+    <div class="col-md-10">
+      <div class="row">
+
+        <div class="col-2">
+          <button type="button" class="btn btn-sm btn-block btn-danger mt-2 mb-2 ml-2 add"
+            (click)="logout()">
+            <b>Logout</b>
+          </button>
+        </div>
+
+        <div class="col-8">
+          <h4 class="display-4 text-primary text-center">Lobby</h4>
+        </div>
+
+        <div class="col-2">
+          <button type="button" class="btn btn-sm btn-block btn-success mt-2 mb-2 add"
+            data-toggle="modal" data-target="#roomModal">
+            <b>New Room</b>
+          </button>
+        </div>
+
+      </div>
+      
       <hr>
 
       <ul class="list-group" *ngIf="rooms">
@@ -32,6 +37,7 @@
           </h4>
         </li>
       </ul>
+      
     </div>
   </div>
 </div>

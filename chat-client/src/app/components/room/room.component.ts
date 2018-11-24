@@ -50,7 +50,6 @@ export class RoomComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
     this.getRoom();
-    this.getMembers();
 
     // Create the message from and its controls
     this.messageForm = new FormGroup({
@@ -80,6 +79,7 @@ export class RoomComponent implements OnInit, OnDestroy {
         if (room.id === this.id) {
           this.currentRoom = room;
           this.joinRoom();
+          this.getMembers();
         }
       }
     }, (err) => { console.log(err) })

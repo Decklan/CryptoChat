@@ -81,16 +81,17 @@ createConnection().then(() => {
         console.log('A user has connected.');
         // Stores the roomId that the socket has joined
         let roomId: number;
+        let currentMember: RoomMember;
 
         // Join a chat room by its unique id
         socket.on('join', (member: RoomMember) => {
             // Set the global roomId and join the room
             roomId = member.roomId;
             socket.join(roomId);
-            console.log('Server: join event received. Joining ', roomId);
 
             // Add member pairing to members array
-            members.push(member);
+            currentMember = member;
+            members.push(currentMember);
 
             // Emit the list of members back to the client
             io.emit('memberJoin', members);
@@ -99,9 +100,7 @@ createConnection().then(() => {
         // When leaving a chat room
         socket.on('leave', (member: RoomMember) => {
             socket.leave(roomId);
-            console.log('Server: leave event received. Leaving ', roomId);
             roomId = null;
-            console.log('Server: roomId now', roomId);
 
             // Remove the member from the array of users in room
             let i: number;
@@ -122,7 +121,14 @@ createConnection().then(() => {
 
         // When a user disconnects
         socket.on('disconnect', () => {
-            console.log('A user has disconnected.')
+            console.log('A user has disconnected.');
+            // Remove the member from the array of users in room
+            let i: number;
+            for (i = 0; i < members.length; i++) {
+                if (currentMember.user.id === members[i].user.id) {
+                    members.splice(i, 1);
+                }
+            }
         })
     })
 

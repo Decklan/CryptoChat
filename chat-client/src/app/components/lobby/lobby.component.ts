@@ -10,6 +10,7 @@ import { UserService } from 'src/app/services/user.service';
 // Models
 import { Room } from 'src/app/models/Room';
 import { User } from 'src/app/models/User';
+import { ChatService } from 'src/app/services/chat.service';
 
 @Component({
   selector: 'app-lobby',
@@ -44,7 +45,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.getAllRooms();
     this.getActiveUsers();
-    this.getCurrentUser();
+    this.currentUser = this.userService.getCurrentUser();
 
     this.roomForm = new FormGroup({
       roomName: new FormControl(null, [
@@ -124,13 +125,6 @@ export class LobbyComponent implements OnInit, OnDestroy {
     .subscribe((users: User[]) => {
       this.activeUsers = users;
     }, (err) => { console.log(err) });
-  }
-
-  /**
-   * Get the currently logged in user
-   */
-  getCurrentUser() {
-    this.currentUser = this.userService.getCurrentUser();
   }
 
   /**

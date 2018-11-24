@@ -16,7 +16,6 @@ export class Member {
 })
 export class ChatService {
   private socket: SocketIOClient.Socket;
-  private members: Member[] = []; // List of users and rooms they are in
 
   constructor() {
     // Pass server url to socket 
