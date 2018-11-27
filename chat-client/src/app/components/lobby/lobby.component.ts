@@ -10,7 +10,7 @@ import { UserService } from 'src/app/services/user.service';
 // Models
 import { Room } from 'src/app/models/Room';
 import { User } from 'src/app/models/User';
-import { ChatService } from 'src/app/services/chat.service';
+import { SocketService } from 'src/app/services/socket.service';
 
 @Component({
   selector: 'app-lobby',
@@ -37,6 +37,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
 
   constructor(private roomService: RoomService,
     private userService: UserService,
+    private socketService: SocketService,
     private router: Router) { }
 
   /**
@@ -135,6 +136,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
     this.userService.updateUser(this.currentUser)
     .subscribe((user: User) => {
       localStorage.removeItem('user');
+      this.socketService.disconnect();
       this.router.navigate(['/']);
     }, (err) => { console.log(err) });
   }

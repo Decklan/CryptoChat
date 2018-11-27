@@ -11,7 +11,8 @@ import { RoomService } from 'src/app/services/room.service';
 import { ChatService } from './../../services/chat.service';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/models/User';
-import { Member } from 'src/app/services/chat.service';
+import { Member } from 'src/app/models/Member';
+import { SocketService } from 'src/app/services/socket.service';
 
 @Component({
   selector: 'app-room',
@@ -37,7 +38,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   public messages: Message[] = [];
 
   constructor(private roomService: RoomService,
-    private chatService: ChatService,
+    private socketService: SocketService,
     private route: ActivatedRoute) { 
       this.route.params.subscribe(p => {
         this.id = +p['id'];
@@ -60,7 +61,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     });
 
     // Subscribe to the messaging observable to receive messages
-    this.messageSubscription = this.chatService.getMessages()
+    this.messageSubscription = this.socketService.getMessages()
     .subscribe((message: Message) => {
       this.messages.push(message);
     });
@@ -89,7 +90,7 @@ export class RoomComponent implements OnInit, OnDestroy {
    * Get the list of members in the current room
    */
   getMembers() {
-    this.memberSubscription = this.chatService.getRoomMembers()
+    this.memberSubscription = this.socketService.getRoomMembers()
     .subscribe((members: Member[]) => {
       console.log('RoomComponent: getMembers() called.');
       this.roomMembers = members;
@@ -100,14 +101,20 @@ export class RoomComponent implements OnInit, OnDestroy {
   joinRoom() {
     console.log('RoomComponent: joinRoom() called.');
     let user: User = JSON.parse(localStorage.getItem('user'));
-    this.chatService.joinRoom(this.currentRoom.id, user);
+    let member: Member = new Member();
+    member.roomId = this.id;
+    member.user = user;
+    this.socketService.joinRoom(member);
   }
 
   // Leave the room you are currently in
   leaveRoom() {
     console.log('RoomComponent: leaveRoom() called.');
     let user: User = JSON.parse(localStorage.getItem('user'));
-    this.chatService.leaveRoom(this.currentRoom.id, user);
+    let member: Member = new Member();
+    member.roomId = this.id;
+    member.user = user;
+    this.socketService.leaveRoom(member);
   }
 
   /**
@@ -125,7 +132,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     message.messageText = text;
 
     this.messageForm.reset();
-    this.chatService.sendMessage(message);
+    this.socketService.sendMessage(message);
   }
 
   /**
@@ -134,7 +141,6 @@ export class RoomComponent implements OnInit, OnDestroy {
    */
   ngOnDestroy() {
     this.leaveRoom();
-    this.chatService.disconnect();
     this.messageSubscription.unsubscribe();
     this.memberSubscription.unsubscribe();
   }

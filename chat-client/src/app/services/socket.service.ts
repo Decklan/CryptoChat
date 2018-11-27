@@ -4,22 +4,31 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 import { Message } from '../models/Message';
-import { User } from '../models/User';
-
-export class Member {
-  roomId: number;
-  user: User;
-}
+import { Member } from '../models/Member';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ChatService {
-  private socket: SocketIOClient.Socket;
+export class SocketService {
+  private socket: SocketIOClient.Socket; // Client-side socket
 
-  constructor() {
-    // Pass server url to socket 
+  constructor() { 
+    this.connect();
+  }
+
+  /**
+   * Setup the url socket listens on
+   */ 
+  connect() {
     this.socket = io(environment.serverBase);
+    console.log('SocketService: Socket connected.');
+  }
+
+  /**
+   * Disconnect from the socket when appropriate
+   */
+  disconnect() {
+    this.socket.disconnect();
   }
 
   /**
@@ -28,20 +37,18 @@ export class ChatService {
    */
   getMessages() {
     // Create the observable/observer (to push new messages to)
-    let observable = new Observable(observer => {
+    return new Observable(observer => {
       // Message event received from the server
       this.socket.on('message', (msgData) => {
         observer.next(msgData); // Update the observable with message
       });
     });
-    // Return observable to sub/unsub to/from
-    return observable;
   }
 
   // Get members in a room to be displayed while a user is in a chat room
   getRoomMembers() {
     // Create an observable to keep track of the users in each room
-    let observable = new Observable(observer => {
+    return new Observable(observer => {
       /**
        * On the join event emitted from the server, update the list of 
        * users in the room.
@@ -58,9 +65,6 @@ export class ChatService {
         observer.next(memberData);
       });
     });
-
-    // Return this observable to subscribe to
-    return observable;
   }
 
   /**
@@ -72,26 +76,14 @@ export class ChatService {
   }
 
   // Join a specific room number by emitting the join event to the server
-  joinRoom(id: number, user: User) {
+  joinRoom(member: Member) {
     console.log('ChatService: joinRoom() called.');
-    let member = new Member();
-    member.roomId = id;
-    member.user = user;
     this.socket.emit('join', member);
-    console.log('After join emit.')
   }
 
   // Leave the room that the user is currently in
-  leaveRoom(id: number, user: User) {
+  leaveRoom(member: Member) {
     console.log('ChatService: leaveRoom() called.');
-    let member = new Member();
-    member.roomId = id;
-    member.user = user;
     this.socket.emit('leave', member);
-  }
-
-  // Disconnect from the socket
-  disconnect() {
-    this.socket.disconnect();
   }
 }
