@@ -134,6 +134,7 @@ export class RoomComponent implements OnInit, OnDestroy {
    */
   ngOnDestroy() {
     this.leaveRoom();
+    this.chatService.disconnect();
     this.messageSubscription.unsubscribe();
     this.memberSubscription.unsubscribe();
   }

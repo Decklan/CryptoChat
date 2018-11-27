@@ -33,9 +33,6 @@ export class ChatService {
       this.socket.on('message', (msgData) => {
         observer.next(msgData); // Update the observable with message
       });
-
-      // Disconnect from the socket appropriately
-      return () => { this.socket.disconnect() }
     });
     // Return observable to sub/unsub to/from
     return observable;
@@ -60,8 +57,6 @@ export class ChatService {
       this.socket.on('memberLeave', (memberData) => {
         observer.next(memberData);
       });
-
-      return() => { this.socket.disconnect() }
     });
 
     // Return this observable to subscribe to
@@ -83,6 +78,7 @@ export class ChatService {
     member.roomId = id;
     member.user = user;
     this.socket.emit('join', member);
+    console.log('After join emit.')
   }
 
   // Leave the room that the user is currently in
@@ -92,5 +88,10 @@ export class ChatService {
     member.roomId = id;
     member.user = user;
     this.socket.emit('leave', member);
+  }
+
+  // Disconnect from the socket
+  disconnect() {
+    this.socket.disconnect();
   }
 }
