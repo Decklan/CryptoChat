@@ -6,11 +6,11 @@ import { Subscription } from 'rxjs';
 // Services
 import { RoomService } from 'src/app/services/room.service';
 import { UserService } from 'src/app/services/user.service';
+import { SocketService } from 'src/app/services/socket.service';
 
 // Models
 import { Room } from 'src/app/models/Room';
 import { User } from 'src/app/models/User';
-import { SocketService } from 'src/app/services/socket.service';
 
 @Component({
   selector: 'app-lobby',

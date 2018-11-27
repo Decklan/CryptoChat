@@ -17,11 +17,10 @@ export class SocketService {
   }
 
   /**
-   * Setup the url socket listens on
+   * Setup the url socket listens on and connect the socket
    */ 
   connect() {
     this.socket = io(environment.serverBase);
-    console.log('SocketService: Socket connected.');
   }
 
   /**

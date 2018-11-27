@@ -5,13 +5,11 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 // Models
 import { Message } from 'src/app/models/Message';
 import { Room } from 'src/app/models/Room';
+import { User } from 'src/app/models/User';
+import { Member } from 'src/app/models/Member';
 
 // Services
 import { RoomService } from 'src/app/services/room.service';
-import { ChatService } from './../../services/chat.service';
-import { UserService } from 'src/app/services/user.service';
-import { User } from 'src/app/models/User';
-import { Member } from 'src/app/models/Member';
 import { SocketService } from 'src/app/services/socket.service';
 
 @Component({
