@@ -32,9 +32,17 @@
 
       <ul class="list-group" *ngIf="rooms">
         <li class="list-group-item room" *ngFor="let room of rooms">
-          <h4 class="text-primary" routerLink="/room/{{room.id}}">
-            {{ room.roomName }}
-          </h4>
+          <div class="row">
+            <div class="col-2">
+              <h4 class="text-primary lead" routerLink="/room/{{room.id}}">
+                {{ room.roomName }}
+              </h4>
+            </div>
+            <div class="col-10">
+              <p *ngIf="room.description">{{ room.description }}</p>
+              <p *ngIf="!room.description">There is no description for this room.</p>
+            </div>
+          </div>
         </li>
       </ul>
       
@@ -58,9 +66,9 @@
             <label for="roomName">Name:</label>
             <input type="text" class="form-control" formControlName="roomName" placeholder="Enter a room name">
           </div>
-          <div class="form-check">
-            <input type="checkbox" class="form-check-input" formControlName="private">
-            <label for="private">Private?</label>
+          <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea class="form-control" formControlName="description" placeholder="Enter a description"></textarea>
           </div>
         </form>
       </div>

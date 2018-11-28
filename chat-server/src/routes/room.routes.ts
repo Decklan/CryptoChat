@@ -16,7 +16,7 @@ export function CreateRoom(req: Request, res: Response) {
     let newRoom: Room = new Room();
     newRoom.roomName = req.body.roomName;
     newRoom.ownerId = req.body.ownerId;
-    newRoom.isPrivate = req.body.isPrivate;
+    newRoom.description = req.body.description;
 
     roomRepository.save(newRoom)
     .then((room: Room) => {
@@ -24,7 +24,7 @@ export function CreateRoom(req: Request, res: Response) {
         resource.id = room.id;
         resource.ownerId = room.ownerId;
         resource.roomName = room.roomName;
-        resource.isPrivate = room.isPrivate;
+        resource.description = room.description;
 
         res.status(200);
         res.send(resource);
@@ -55,7 +55,7 @@ export function GetAllRooms(req: Request, res: Response) {
             resource.id = room.id;
             resource.ownerId = room.ownerId;
             resource.roomName = room.roomName;
-            resource.isPrivate = room.isPrivate;
+            resource.description = room.description;
 
             roomsResources.push(resource);
         }
@@ -88,7 +88,7 @@ export function GetRoomById(req: Request, res: Response) {
         resource.id = room.id;
         resource.ownerId = room.ownerId;
         resource.roomName = room.roomName;
-        resource.isPrivate = room.isPrivate;
+        resource.description = room.description;
 
         res.status(200);
         res.send(resource);

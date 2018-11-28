@@ -23,6 +23,7 @@ import {
 
 // Models
 import { RoomMember } from './models/RoomMember';
+import { UserResource } from './resources/UserResource';
 
 const PORT = process.env.PORT || 8081;
 const express = require('express');
@@ -91,7 +92,16 @@ createConnection().then(() => {
 
             // Add member pairing to members array
             currentMember = member;
-            members.push(currentMember);
+            
+            // Check if the member is already in the room (page refresh)
+            let memberInRoom: boolean = false;
+            for (let roomMember of members) {
+                if (member.user.id === roomMember.user.id)
+                    memberInRoom = true;
+            }
+
+            if (!memberInRoom)
+                members.push(currentMember);
 
             // Emit the list of members back to the client
             io.emit('memberJoin', members);
@@ -122,13 +132,6 @@ createConnection().then(() => {
         // When a user disconnects
         socket.on('disconnect', () => {
             console.log('A user has disconnected.');
-            // Remove the member from the array of users in room
-            let i: number;
-            for (i = 0; i < members.length; i++) {
-                if (currentMember.user.id === members[i].user.id) {
-                    members.splice(i, 1);
-                }
-            }
         })
     })
 

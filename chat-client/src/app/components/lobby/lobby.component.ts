@@ -53,7 +53,10 @@ export class LobbyComponent implements OnInit, OnDestroy {
         Validators.required,
         Validators.minLength(4)
       ]),
-      private: new FormControl(false)
+      description: new FormControl(null, [
+        Validators.minLength(10),
+        Validators.maxLength(250)
+      ])
     });
   }
 
@@ -72,13 +75,13 @@ export class LobbyComponent implements OnInit, OnDestroy {
   createRoom() {
     // Grab the room info from the form
     let roomName = this.roomForm.controls['roomName'].value;
-    let isPrivate = this.roomForm.controls['private'].value;
+    let description = this.roomForm.controls['description'].value;
     let ownerId = this.currentUser.id;
 
     // Create a model out of the form info
     let newRoom = new Room();
     newRoom.roomName = roomName;
-    newRoom.isPrivate = isPrivate;
+    newRoom.description = description;
     newRoom.ownerId = ownerId;
 
     // Clear form input fields

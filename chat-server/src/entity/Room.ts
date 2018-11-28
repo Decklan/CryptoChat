@@ -17,6 +17,8 @@ export class Room {
     roomName: string;
 
     // Whether the room is public or private
-    @Column()
-    isPrivate: boolean
+    @Column({
+        nullable: true
+    })
+    description: string;
 }
