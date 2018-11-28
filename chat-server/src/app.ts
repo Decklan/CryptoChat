@@ -48,6 +48,16 @@ createConnection().then(() => {
         origin: 'http://localhost:4200'
     }));
 
+    // Handler for uncaught exceptions to keep the server from crashing
+    process.on('uncaughtException', (err) => {
+        console.error('ERROR: Uncaught exception - ' + err.message);
+    });
+
+    // Handler for uncaught promise rejections to keep the server from crashing
+    process.on('unhandledRejection', (reason, promise) => {
+        console.error('ERROR: Unhandled promise rejection - ' + reason.message || reason);
+    });
+
     /**
      * Routes to perform user CRUD operations
      * All routes working
