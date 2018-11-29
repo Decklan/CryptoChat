@@ -39,7 +39,8 @@
           <p class="text-center">To start chatting, join a room from the list of rooms in the sidebar.</p>
           <p class="text-center">You can also send a message to multiple, specific rooms by clicking the broadcast button below.</p>
           <div class="text-center">
-            <button type="button" class="btn btn-primary text-center ml-auto mr-auto">
+            <button type="button" class="btn btn-primary text-center ml-auto mr-auto"
+              data-toggle="modal" data-target="#broadcastModal">
               Broadcast
             </button>
           </div>
@@ -99,3 +100,43 @@
     </div>
   </div>
 </div>
+
+<!-- Modal for creating a message to broadcast to multiple rooms -->
+<div class="modal" id="broadcastModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+  
+        <div class="modal-header bg-primary">
+          <h4 class="text-white">Broadcast a message</h4>
+          <button type="button" class="close" data-dismiss="modal" (click)="clear()">&times;</button>
+        </div>
+  
+        <div class="modal-body">
+          <form [formGroup]="broadcastForm">
+            <div class="form-group">
+              <input type="text" class="form-control" formControlName="messageText" placeholder="Enter your message">
+            </div>
+            <div class="form-group">
+              <p class="lead text-center">Who would you like to broadcast to?</p>
+              <select multiple class="form-control" formControlName="recipients">
+                <option *ngFor="let room of rooms" [value]="room.id">
+                  {{ room.roomName }}
+                </option>
+              </select>
+            </div>
+          </form>
+        </div>
+  
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success" data-dismiss="modal" (click)="broadcastMessage()"
+            [disabled]="broadcastForm.invalid">
+            Broadcast Message
+          </button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
+            Cancel
+          </button>
+        </div>
+  
+      </div>
+    </div>
+  </div>

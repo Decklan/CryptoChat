@@ -11,6 +11,7 @@ import { SocketService } from 'src/app/services/socket.service';
 // Models
 import { Room } from 'src/app/models/Room';
 import { User } from 'src/app/models/User';
+import { Message } from 'src/app/models/Message';
 
 @Component({
   selector: 'app-lobby',
@@ -32,6 +33,9 @@ export class LobbyComponent implements OnInit, OnDestroy {
   public currentUser: User;
   public roomForm: FormGroup;
   public room: Room;
+
+  // Form for broadcasting a message
+  public broadcastForm: FormGroup;
 
   // Subscriptions to the various observables used
   private roomSubscription: Subscription;
@@ -58,6 +62,16 @@ export class LobbyComponent implements OnInit, OnDestroy {
       description: new FormControl(null, [
         Validators.minLength(10),
         Validators.maxLength(250)
+      ])
+    });
+
+    this.broadcastForm = new FormGroup({
+      messageText: new FormControl(null, [
+        Validators.required,
+        Validators.minLength(2)
+      ]),
+      recipients: new FormControl(null, [
+        Validators.required
       ])
     });
   }
@@ -139,6 +153,20 @@ export class LobbyComponent implements OnInit, OnDestroy {
     .subscribe((users: User[]) => {
       this.activeUsers = users;
     }, (err) => { console.log(err) });
+  }
+
+  /**
+   * Broadcast a message to multiple rooms
+   */
+  broadcastMessage() {
+    let messageText: string = this.broadcastForm.controls['messageText'].value;
+    let to: number[] = this.broadcastForm.controls['recipients'].value;
+
+    let message: Message = new Message();
+    message.from = this.currentUser.userName;
+    message.messageText = messageText;
+
+    this.socketService.broadcastMessage(to, message);
   }
 
   /**

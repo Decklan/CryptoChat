@@ -79,10 +79,24 @@ export class SocketService {
 
   /**
    * Send a message by emitting the message event to the server
+   * @param message The message to be sent
    */
   sendMessage(message: Message) {
     console.log('ChatService: sendMessage() called.');
     this.socket.emit('message', message);
+  }
+
+  /**
+   * Sends a message to be broadcasted to multiple rooms
+   * @param to The list of room ids to send the message to
+   * @param message The message to send to each of the rooms
+   */
+  broadcastMessage(to: number[], message: Message) {
+    let broadcast = {
+      to,
+      message
+    }
+    this.socket.emit('broadcast', broadcast);
   }
 
   // Join a specific room number by emitting the join event to the server

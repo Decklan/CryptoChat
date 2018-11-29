@@ -23,7 +23,6 @@ import {
 
 // Models
 import { RoomMember } from './models/RoomMember';
-import { UserResource } from './resources/UserResource';
 
 const PORT = process.env.PORT || 8081;
 const express = require('express');
@@ -139,9 +138,21 @@ createConnection().then(() => {
             io.sockets.in(roomId).emit('message', data);
         });
 
+        // Receive and emit a message to be broadcasted to multiple rooms
+        socket.on('broadcast', (broadcastData) => {
+            let recipients: number[] = broadcastData.to;
+            
+            // Emit a message event for each recipient of the message
+            for (let recipient of recipients) {
+                io.sockets.in(recipient).emit('message', broadcastData.message);
+            }
+        });
+
         // When a user disconnects
         socket.on('disconnect', () => {
             console.log('A user has disconnected.');
+            roomId = null;
+            currentMember = null;
         })
     })
 
