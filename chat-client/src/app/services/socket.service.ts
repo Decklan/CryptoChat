@@ -16,6 +16,15 @@ export class SocketService {
 
   constructor() { 
     this.connect();
+
+    // Set up some event listeners for any types of errors that could occur
+    this.socket.on('connect_error', (err) => {
+      console.error('CLIENT: There was an error connecting socket \n', err);
+    });
+
+    this.socket.on('error', (err) => {
+      console.error('CLIENT: An error occurred \n', err);
+    });
   }
 
   /**

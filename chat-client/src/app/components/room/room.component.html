@@ -2,7 +2,7 @@
 
   <div class="row">
 
-    <div class="col-2 bg-primary">
+    <div class="col-2 users">
       <h4 class="text-center text-white">Currently Chatting</h4>
       <ul class="list-group-flush" *ngIf="roomMembers">
         <li class="list-group-item bg-primary" *ngFor="let member of roomMembers">
@@ -16,8 +16,8 @@
     <div class="col-10" *ngIf="currentRoom">
       <h4 class="display-4 text-primary text-center mb-0">{{ currentRoom.roomName }}</h4>
 
-      <div class="row">
-        <div class="message-log bg-light m-0">
+      <div class="row mb-0">
+        <div class="message-log bg-light">
           <ul class="list-group-flush">
             <li *ngFor="let message of messages" class="list-group-item bg-light">
               <div class="row">
@@ -29,9 +29,9 @@
         </div>
       </div>
 
-      <div class="row">
-        <div class="message-input bg-light">
-          <form [formGroup]="messageForm" class="m-2">
+      <div class="row mt-0 pt-0">
+        <div class="message-input">
+          <form [formGroup]="messageForm" class="ml-2 mr-2">
             <div class="form-group">
               <div class="row">
                 <div class="col-11">

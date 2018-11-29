@@ -1,6 +1,11 @@
 #room-container {
     width: 100%;
-    height: 95vh;
+    height: 100vh;
+}
+
+.users {
+    height: 100vh;
+    background: #8c8c8c;
 }
 
 .message-log {
@@ -13,7 +18,6 @@
     position: absolute;
     width: 100%;
     height: 5vh;
-    bottom: 0px;
 }
 
 .send {

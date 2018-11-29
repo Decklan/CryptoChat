@@ -1,7 +1,8 @@
 <div class="container-fluid pl-0" id="lobby-container">
   <div class="row">
 
-    <div class="col-md-2 bg-primary users">
+    <div class="col-md-2 users">
+      <h4 class="text-center text-white">{{ currentUser.userName }}</h4>
       <app-user-list [users]="activeUsers"></app-user-list>
     </div>
 
