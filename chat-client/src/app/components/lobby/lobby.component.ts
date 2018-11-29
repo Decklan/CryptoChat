@@ -25,11 +25,13 @@ export class LobbyComponent implements OnInit, OnDestroy {
    * currentUser - The user currently logged in to the app
    * roomForm    - Form for collecting room info when creating a
    *               new room
+   * room        - The room the user is currently chatting in
    */
   public rooms: Room[];
   public activeUsers: User[];
   public currentUser: User;
   public roomForm: FormGroup;
+  public room: Room;
 
   // Subscriptions to the various observables used
   private roomSubscription: Subscription;
@@ -66,6 +68,14 @@ export class LobbyComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.roomSubscription.unsubscribe();
     this.activeUserSubscription.unsubscribe();
+  }
+
+  /**
+   * Sets the id of the room we are navigating to
+   * @param id The id of the room to navigate to
+   */
+  setRoom(room: Room) {
+    this.room = room;
   }
 
   /**

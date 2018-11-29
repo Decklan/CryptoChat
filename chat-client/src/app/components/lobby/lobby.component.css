@@ -3,7 +3,7 @@
     height: 100vh;
 }
 
-.room:hover {
+.room-list:hover {
     cursor: pointer;
 }
 
@@ -13,5 +13,9 @@
 
 .users {
     height: 100vh;
-    background: #8c8c8c;
+}
+
+.logout:hover {
+    cursor: pointer;
+    background-color: lightgray;
 }

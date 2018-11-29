@@ -1,5 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 // Models
@@ -9,7 +8,6 @@ import { User } from 'src/app/models/User';
 import { Member } from 'src/app/models/Member';
 
 // Services
-import { RoomService } from 'src/app/services/room.service';
 import { SocketService } from 'src/app/services/socket.service';
 
 @Component({
@@ -19,12 +17,12 @@ import { SocketService } from 'src/app/services/socket.service';
 })
 export class RoomComponent implements OnInit, OnDestroy {
   /**
-   * id - The id of the room we are loading from the server
-   * room - Stores the room loaded from the server
-   * subscription - Observable subscription to sub/unsub to/from
+   * currentRoom - The room that the user is currently in
+   * roomMembers - List of users who are currently in the room
+   * messageSubscription - Observable subscription to messaging in the room
+   * memberSubscription - Observable subscription to the users in the room
    */
-  private id: number;
-  public currentRoom: Room;
+  @Input() public currentRoom: Room;
   public roomMembers: Member[] = [];
   private messageSubscription;
   private memberSubscription;
@@ -35,20 +33,14 @@ export class RoomComponent implements OnInit, OnDestroy {
   // Array to store messages in
   public messages: Message[] = [];
 
-  constructor(private roomService: RoomService,
-    private socketService: SocketService,
-    private route: ActivatedRoute) { 
-      this.route.params.subscribe(p => {
-        this.id = +p['id'];
-      });
-  }
+  constructor(private socketService: SocketService) { }
 
   /**
    * Handle any logic that needs to be accomplished right before
    * presenting the view to the user.
    */
   ngOnInit() {
-    this.getRoom();
+    this.joinRoom();
 
     // Create the message from and its controls
     this.messageForm = new FormGroup({
@@ -58,6 +50,13 @@ export class RoomComponent implements OnInit, OnDestroy {
       ])
     });
 
+    this.subscribeToMessages();
+  }
+
+  /**
+   * Subscribe to the observable stream of messages for the room
+   */
+  subscribeToMessages() {
     // Subscribe to the messaging observable to receive messages
     this.messageSubscription = this.socketService.getMessages()
     .subscribe((message: Message) => {
@@ -66,26 +65,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Rather than fetch the room by its ID from the server, get all
-   * of the rooms from the observable that already has each room and
-   * match against the id that was passed as a route param.
-   */
-  getRoom() {
-    this.roomService.getAllRooms()
-    .subscribe((rooms: Room[]) => {
-      console.log('RoomComponent: getRoom() called.');
-      for (let room of rooms) {
-        if (room.id === this.id) {
-          this.currentRoom = room;
-          this.joinRoom();
-          this.getMembers();
-        }
-      }
-    }, (err) => { console.log(err) })
-  }
-
-  /**
-   * Get the list of members in the current room
+   * Subscribe to the observable stream of users in the room
    */
   getMembers() {
     this.memberSubscription = this.socketService.getRoomMembers()
@@ -100,7 +80,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     console.log('RoomComponent: joinRoom() called.');
     let user: User = JSON.parse(localStorage.getItem('user'));
     let member: Member = new Member();
-    member.roomId = this.id;
+    member.roomId = this.currentRoom.id;
     member.user = user;
     this.socketService.joinRoom(member);
   }
@@ -110,7 +90,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     console.log('RoomComponent: leaveRoom() called.');
     let user: User = JSON.parse(localStorage.getItem('user'));
     let member: Member = new Member();
-    member.roomId = this.id;
+    member.roomId = this.currentRoom.id;
     member.user = user;
     this.socketService.leaveRoom(member);
   }
@@ -121,14 +101,16 @@ export class RoomComponent implements OnInit, OnDestroy {
    * to send the message.
    */
   sendMessage() {
+    // Capture the message the user entered and the user who sent it
     let text = this.messageForm.controls['messageText'].value;
-
     let user: User = JSON.parse(localStorage.getItem('user'));
 
+    // Create the message
     let message: Message = new Message();
     message.from = user.userName;
     message.messageText = text;
 
+    // Reset the form and send the message
     this.messageForm.reset();
     this.socketService.sendMessage(message);
   }
@@ -138,9 +120,11 @@ export class RoomComponent implements OnInit, OnDestroy {
    * kill the connection to the socket.
    */
   ngOnDestroy() {
+    console.log(`RoomComponent: ${this.currentRoom.roomName} is being destroyed.`);
     this.leaveRoom();
     this.messageSubscription.unsubscribe();
-    this.memberSubscription.unsubscribe();
+    if (this.memberSubscription)
+      this.memberSubscription.unsubscribe();
   }
 
 }

@@ -4,9 +4,9 @@
 <hr>
 
 <div id="userCollapse">
-  <ul class="list-group ml-2" *ngIf="users">
-    <li class="list-group-item bg-primary" *ngFor="let user of users">
-      <a href="#" class="nav-link text-white">
+  <ul class="list-group-flush ml-2" *ngIf="users">
+    <li class="list-group-item bg-secondary" *ngFor="let user of users">
+      <a class="nav-link text-white">
         <b>{{ user.userName }}</b>
       </a>
     </li>

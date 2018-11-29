@@ -1,52 +1,64 @@
 <div class="container-fluid pl-0" id="lobby-container">
   <div class="row">
 
-    <div class="col-md-2 users">
-      <h4 class="text-center text-white">{{ currentUser.userName }}</h4>
-      <app-user-list [users]="activeUsers"></app-user-list>
-    </div>
-
-    <div class="col-md-10">
-      <div class="row">
-
-        <div class="col-2">
-          <button type="button" class="btn btn-sm btn-block btn-danger mt-2 mb-2 ml-2 add"
-            (click)="logout()">
-            <b>Logout</b>
-          </button>
-        </div>
-
-        <div class="col-8">
-          <h4 class="display-4 text-primary text-center">Lobby</h4>
-        </div>
-
-        <div class="col-2">
-          <button type="button" class="btn btn-sm btn-block btn-success mt-2 mb-2 add"
-            data-toggle="modal" data-target="#roomModal">
-            <b>New Room</b>
-          </button>
-        </div>
-
+    <div class="col-md-2 p-0 users bg-secondary">
+      <h4 class="text-center text-white bg-dark dropdown-toggle mb-2 pt-3 pb-3"
+        data-toggle="dropdown" data-target="#userDropdown">
+        {{ currentUser.userName }}
+      </h4>
+      <div class="dropdown-menu">
+        <a class="nav-link logout" (click)="logout()">Logout</a>
       </div>
-      
-      <hr>
 
-      <ul class="list-group" *ngIf="rooms">
-        <li class="list-group-item room" *ngFor="let room of rooms">
-          <div class="row">
-            <div class="col-2">
-              <h4 class="text-primary lead" routerLink="/room/{{room.id}}">
-                {{ room.roomName }}
-              </h4>
-            </div>
-            <div class="col-10">
-              <p *ngIf="room.description">{{ room.description }}</p>
-              <p *ngIf="!room.description">There is no description for this room.</p>
-            </div>
-          </div>
+      <h4 class="text-center text-white mb-3">Rooms</h4>
+      <ul class="list-group-flush p-0" *ngIf="rooms">
+        <li class="list-group-item room-list" *ngFor="let room of rooms" style="background-color: gray;">
+          <h4 (click)="setRoom(room)" class="text-center text-white">{{ room.roomName }}</h4>
         </li>
       </ul>
-      
+
+      <h4 class="text-center text-white room-list mb-3" (click)="setRoom(null)">Go to Lobby</h4>
+
+      <button type="button" class="btn btn-md btn-block btn-success mt-2 mb-2"
+        data-toggle="modal" data-target="#roomModal">
+        <b>New Room</b>
+      </button>
+
+      <h4 class="text-center text-white mb-3">Active Users</h4>
+      <ul class="list-group-flush p-0" *ngIf="activeUsers">
+        <li class="list-group-item" *ngFor="let user of activeUsers" style="background-color: gray;">
+          <h4 class="text-center text-white">{{ user.userName }}</h4>
+        </li>
+      </ul>
+    </div>
+
+    <div class="col-md-10 p-0">
+      <div *ngIf="!room">
+        <div class="container-fluid jumbotron mb-10">
+          <h3 class="display-3 text-center text-primary">Welcome to CryptoChat</h3>
+          <p class="text-center">To start chatting, join a room from the list of rooms in the sidebar.</p>
+          <p class="text-center">You can also send a message to multiple, specific rooms by clicking the broadcast button below.</p>
+          <div class="text-center">
+            <button type="button" class="btn btn-primary text-center ml-auto mr-auto">
+              Broadcast
+            </button>
+          </div>
+        </div>
+
+        <div class="container">
+          <p class="lead text-danger">
+            <b>
+              WARNING: The views and opinions expressed by the users in this application are solely those of the individual users.
+              Anything said in this application does not represent the views of anyone involved in the development of this application.
+              That being said, if you enjoy the hilarity of the internet and understand that you may be triggered during the use of
+              this application, enjoy!
+            </b>
+          </p>
+        </div>
+      </div>
+      <div *ngIf="room">
+        <app-room [currentRoom]="room"></app-room>
+      </div>
     </div>
   </div>
 </div>
