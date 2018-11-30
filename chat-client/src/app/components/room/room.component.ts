@@ -51,6 +51,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     });
 
     this.subscribeToMessages();
+    this.getMembers();
   }
 
   /**

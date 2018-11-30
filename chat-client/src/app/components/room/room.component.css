@@ -4,12 +4,19 @@
 }
 
 .users {
-    height: 100vh;
-    background: #8c8c8c;
+    width: 100%;
+}
+
+.user {
+    width: 100%;
+}
+
+.main-content {
+    width: 100%;
+    height: 85vh;
 }
 
 .message-log {
-    position: relative;
     width: 100%;
     height: 85vh;
 }
@@ -18,9 +25,4 @@
     position: absolute;
     width: 100%;
     height: 5vh;
-}
-
-.send {
-    width: 100px;
-    height: 100%;
 }

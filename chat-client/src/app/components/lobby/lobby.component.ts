@@ -156,7 +156,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Broadcast a message to multiple rooms
+   * Broadcast a message to multiple selected rooms
    */
   broadcastMessage() {
     let messageText: string = this.broadcastForm.controls['messageText'].value;
