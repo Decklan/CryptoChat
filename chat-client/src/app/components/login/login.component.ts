@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
+// Sevices
 import { UserService } from './../../services/user.service';
+
+// Models
+import { User } from 'src/app/models/User';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +18,8 @@ export class LoginComponent implements OnInit {
   public createForm: FormGroup; // For new accounts
   public welcome: string = 'CryptoChat';
 
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService,
+    private router: Router) { }
 
   ngOnInit() {
     this.loginForm = new FormGroup({
@@ -53,7 +59,11 @@ export class LoginComponent implements OnInit {
       this.loginForm.reset();
     } else {
       this.loginForm.reset();
-      this.userService.login(username, password);
+      this.userService.login(username, password)
+      .subscribe((user: User) => {
+        localStorage.setItem('user', JSON.stringify(user));
+        this.router.navigate(['/lobby']);
+      });
     }
   }
 
@@ -69,7 +79,11 @@ export class LoginComponent implements OnInit {
       this.createForm.reset();
     } else {
       this.createForm.reset();
-      this.userService.createAccount(username, password);
+      this.userService.createAccount(username, password)
+      .subscribe((user: User) => {
+        localStorage.setItem('user', JSON.stringify(user));
+        this.router.navigate(['/lobby']);
+      });
     }
   }
 

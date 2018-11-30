@@ -1,31 +1,70 @@
 <div class="container-fluid pl-0" id="lobby-container">
   <div class="row">
-    <div class="col-10">
-        <h4 class="display-4 text-primary text-center">Lobby</h4>
-    </div>
-    <div class="col-2">
-      <button type="button" class="btn btn-sm btn-block btn-success mt-2 mb-2 add"
+
+    <div class="col-md-2 p-0 users bg-secondary">
+      <h4 class="text-center text-white bg-dark dropdown-toggle mb-2 pt-3 pb-3"
+        data-toggle="dropdown" data-target="#userDropdown">
+        {{ currentUser.userName }}
+      </h4>
+      <div class="dropdown-menu">
+        <a class="nav-link logout" (click)="logout()">Logout</a>
+      </div>
+
+      <h4 class="text-center text-white mb-3">Rooms</h4>
+      <ul class="list-group-flush p-0" *ngIf="rooms">
+        <li class="list-group-item room-list" *ngFor="let room of rooms" style="background-color: gray;">
+          <h4 (click)="setRoom(room)" class="text-center text-white">
+            {{ room.roomName }}
+            <button type="button" class="btn btn-secondary" *ngIf="room.ownerId === currentUser.id" 
+            (click)="removeRoom(room.id)">
+            &times;
+          </button>
+          </h4>
+          
+        </li>
+      </ul>
+
+      <h4 class="text-center text-white room-list mb-3" (click)="setRoom(null)">Go to Lobby</h4>
+
+      <button type="button" class="btn btn-md btn-block btn-success mt-2 mb-2"
         data-toggle="modal" data-target="#roomModal">
         <b>New Room</b>
       </button>
-    </div>
-  </div>
-  <hr>
-  <div class="row">
-    <div class="col-md-3">
-      <app-user-list [users]="activeUsers"></app-user-list>
-    </div>
-    <div class="col-md-9 pl-0">
-      <h4 class="display-4 text-primary text-center">Rooms</h4>
-      <hr>
 
-      <ul class="list-group" *ngIf="rooms">
-        <li class="list-group-item room" *ngFor="let room of rooms">
-          <h4 class="text-primary" routerLink="/room/{{room.id}}">
-            {{ room.roomName }}
-          </h4>
+      <h4 class="text-center text-white mb-3">Active Users</h4>
+      <ul class="list-group-flush p-0" *ngIf="activeUsers">
+        <li class="list-group-item" *ngFor="let user of activeUsers" style="background-color: gray;">
+          <h4 class="text-center text-white">{{ user.userName }}</h4>
         </li>
       </ul>
+    </div>
+
+    <div class="col-md-10 p-0">
+      <div *ngIf="!room">
+        <div class="container-fluid jumbotron mb-10">
+          <h3 class="display-3 text-center text-primary">Welcome to CryptoChat</h3>
+          <p class="text-center">To start chatting, join a room from the list of rooms in the sidebar.</p>
+          <p class="text-center">You can also send a message to multiple, specific rooms by clicking the broadcast button below.</p>
+          <div class="text-center">
+            <button type="button" class="btn btn-primary text-center ml-auto mr-auto"
+              data-toggle="modal" data-target="#broadcastModal">
+              Broadcast
+            </button>
+          </div>
+        </div>
+
+        <div class="container">
+          <p class="lead text-danger">
+            <b>
+              WARNING: The views and opinions expressed by the users in this application are solely those of the individual users.
+              Anything said in this application does not represent the views of anyone involved in the development of this application.
+            </b>
+          </p>
+        </div>
+      </div>
+      <div *ngIf="room">
+        <app-room [currentRoom]="room"></app-room>
+      </div>
     </div>
   </div>
 </div>
@@ -46,15 +85,15 @@
             <label for="roomName">Name:</label>
             <input type="text" class="form-control" formControlName="roomName" placeholder="Enter a room name">
           </div>
-          <div class="form-check">
-            <input type="checkbox" class="form-check-input" formControlName="private">
-            <label for="private">Private?</label>
+          <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea class="form-control" formControlName="description" placeholder="Enter a description"></textarea>
           </div>
         </form>
       </div>
 
       <div class="modal-footer">
-        <button type="submit" class="btn btn-success" (click)="createRoom()" data-dismiss="modal"
+        <button type="submit" class="btn btn-success" data-dismiss="modal" (click)="createRoom()"
           [disabled]="roomForm.invalid">
           Create Room
         </button>
@@ -66,3 +105,43 @@
     </div>
   </div>
 </div>
+
+<!-- Modal for creating a message to broadcast to multiple rooms -->
+<div class="modal" id="broadcastModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+  
+        <div class="modal-header bg-primary">
+          <h4 class="text-white">Broadcast a message</h4>
+          <button type="button" class="close" data-dismiss="modal" (click)="clear()">&times;</button>
+        </div>
+  
+        <div class="modal-body">
+          <form [formGroup]="broadcastForm">
+            <div class="form-group">
+              <input type="text" class="form-control" formControlName="messageText" placeholder="Enter your message">
+            </div>
+            <div class="form-group">
+              <p class="lead text-center">Who would you like to broadcast to?</p>
+              <select multiple class="form-control" formControlName="recipients">
+                <option *ngFor="let room of rooms" [value]="room.id">
+                  {{ room.roomName }}
+                </option>
+              </select>
+            </div>
+          </form>
+        </div>
+  
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success" data-dismiss="modal" (click)="broadcastMessage()"
+            [disabled]="broadcastForm.invalid">
+            Broadcast Message
+          </button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
+            Cancel
+          </button>
+        </div>
+  
+      </div>
+    </div>
+  </div>

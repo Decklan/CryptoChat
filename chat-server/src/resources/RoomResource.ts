@@ -5,5 +5,5 @@ export class RoomResource {
     id: number;
     ownerId: number;
     roomName: string;
-    isPrivate: boolean;
+    description: string;
 }

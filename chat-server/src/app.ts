@@ -21,6 +21,10 @@ import {
     RemoveRoomById
 } from './routes/room.routes';
 
+// Models
+import { RoomMember } from './models/RoomMember';
+import { Message } from './models/Message';
+
 const PORT = process.env.PORT || 8081;
 const express = require('express');
 
@@ -43,6 +47,16 @@ createConnection().then(() => {
     app.use(cors({
         origin: 'http://localhost:4200'
     }));
+
+    // Handler for uncaught exceptions to keep the server from crashing
+    process.on('uncaughtException', (err) => {
+        console.error('ERROR: Uncaught exception - ' + err.message);
+    });
+
+    // Handler for uncaught promise rejections to keep the server from crashing
+    process.on('unhandledRejection', (reason, promise) => {
+        console.error('ERROR: Unhandled promise rejection - ' + reason.message || reason);
+    });
 
     /**
      * Routes to perform user CRUD operations
@@ -68,31 +82,77 @@ createConnection().then(() => {
         console.log(`Application is now listening on port: ${PORT}`);
     });
 
+    /**
+     * Store the list of users and the rooms they are in on the server
+     * so it can be appropriately emitted back to the client
+     */
+    let members: RoomMember[] = [];
+    let messages: Message[] = [];
+
     io.on('connection', (socket) => {
         console.log('A user has connected.');
         // Stores the roomId that the socket has joined
-        let roomId;
+        let roomId: number;
+        let currentMember: RoomMember;
 
         // Join a chat room by its unique id
-        socket.on('join', (room) => {
-            roomId = room;
-            socket.join(roomId);
+        socket.on('join', (member: RoomMember) => {
+            // Set the global roomId and join the room
+            roomId = member.roomId;
+
+            // Add member pairing to members array
+            currentMember = member;
+            
+            // Check if the member is already in the room (page refresh)
+            let memberInRoom: boolean = false;
+            for (let roomMember of members) {
+                if (member.user.id === roomMember.user.id)
+                    memberInRoom = true;
+            }
+
+            if (!memberInRoom) {
+                members.push(currentMember);
+                socket.join(roomId);
+            }
+
+            // Emit the list of members back to the client
+            io.emit('memberJoin', members);
         });
 
         // When leaving a chat room
-        socket.on('leave', () => {
-            console.log(`Leaving ${roomId}`);
+        socket.on('leave', (member: RoomMember) => {
             socket.leave(roomId);
+            roomId = null;
+
+            // Remove the member from the array of users in room
+            let i: number;
+            for (i = 0; i < members.length; i++) {
+                if (member.user.id === members[i].user.id) {
+                    members.splice(i, 1);
+                }
+            }
+
+            // Emit the list of members back to the client
+            io.emit('memberLeave', members);
         });
 
         // Receive and emit a message to sockets in a specific room
-        socket.on('message', (data) => {
-            io.sockets.in(roomId).emit('message', data);
+        socket.on('message', (messageData) => {
+            messages.push(messageData);
+            io.emit('message', messages);
+        });
+
+        // Receive and emit a message to be broadcasted to multiple rooms
+        socket.on('broadcast', (broadcastData) => {
+            messages.push(broadcastData);
+            io.emit('message', messages);
         });
 
         // When a user disconnects
         socket.on('disconnect', () => {
-            console.log('A user has disconnected.')
+            console.log('A user has disconnected.');
+            roomId = null;
+            currentMember = null;
         })
     })
 

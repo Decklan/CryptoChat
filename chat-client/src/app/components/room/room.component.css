@@ -1,28 +1,28 @@
 #room-container {
     width: 100%;
-    height: 90vh;
+    height: 100vh;
 }
 
-#chat {
-    border-left-style: solid;
-    border-left-width: 1px;
-    border-left-color: gray;
+.users {
+    width: 100%;
+}
+
+.user {
+    width: 100%;
+}
+
+.main-content {
+    width: 100%;
+    height: 85vh;
 }
 
 .message-log {
-    position: relative;
     width: 100%;
-    height: 80vh;
+    height: 85vh;
 }
 
 .message-input {
     position: absolute;
     width: 100%;
-    height: 10vh;
-    bottom: 10px;
-}
-
-.send {
-    width: 100px;
-    height: 100%;
+    height: 5vh;
 }

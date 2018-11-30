@@ -1,39 +1,45 @@
 <div class="container-fluid pl-0" id="room-container">
-  <div class="row">
-    <div class="col-md-3">
-      <app-user-list [users]=""></app-user-list>
+  <h4 class="display-4 text-primary text-center mb-0" *ngIf="currentRoom">{{ currentRoom.roomName }}</h4>
+
+  <div class="row bg-secondary bg-light main-content ml-1" *ngIf="currentRoom">
+    <div class="col-10 message-log">
+      <ul class="list-group-flush">
+        <li *ngFor="let message of messages" class="list-group-item bg-light">
+          <div class="row" *ngIf="roomMessage(message.to)">
+            <div class="col-1"><h5 class="lead text-center">{{ message.from }}:</h5></div>
+            <div class="col-11">{{ message.messageText }}</div>
+          </div>
+        </li>
+      </ul>
     </div>
-    <div class="col-md-9 pl-0" *ngIf="currentRoom" id="chat">
-      <h4 class="display-4 text-primary text-center">{{ currentRoom.roomName }}</h4>
-      <hr>
+    <div class="col-2 bg-secondary message-log">
+      <h4 class="lead text-center text-white mt-1">Currently Chatting</h4>
 
-      <div class="message-log">
-        <ul class="list-group-flush">
-          <li *ngFor="let message of messages" class="list-group-item">
-            <p class="lead" *ngIf="message">{{ message.from }}</p>
-            <p *ngIf="message">{{ message.messageText }}</p>
-          </li>
-        </ul>
-      </div>
+      <ul class="list-group-flush users" *ngIf="roomMembers">
+        <li class="list-group-item bg-secondary user" *ngFor="let member of roomMembers">
+          <h4 class="text-center text-white">{{ member.user.userName }}</h4>
+        </li>
+      </ul>
+    </div>
+  </div>
 
-      <div class="message-input">
-        <hr class="mb-2">
-        <form [formGroup]="messageForm" class="ml-2">
-          <div class="form-group">
-            <div class="row">
-              <div class="col">
-                <textarea type="text" class="form-control" formControlName="messageText" placeholder="Enter your message"></textarea>
-              </div>
-              <div class="col-2">
-                <button type="button" class="btn btn-primary send" [disabled]="messageForm.invalid"
-                  (click)="sendMessage()">
-                  Send
-                </button>
-              </div>
+  <div class="row mt-2 ml-1">
+    <div class="message-input">
+      <form [formGroup]="messageForm" >
+        <div class="form-group">
+          <div class="row">
+            <div class="col-10">
+              <input type="text" class="form-control" formControlName="messageText" placeholder="Enter your message">
+            </div>
+            <div class="col-2">
+              <button type="button" class="btn btn-primary" [disabled]="messageForm.invalid"
+                (click)="sendMessage()">
+                Send
+              </button>
             </div>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   </div>
 </div>

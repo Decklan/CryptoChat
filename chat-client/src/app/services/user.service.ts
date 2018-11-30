@@ -10,14 +10,18 @@ import { User } from '../models/User';
   providedIn: 'root'
 })
 export class UserService {
+  /**
+   * apiBase         - The url addition for the backend user routes
+   * usersSubject    - BehaviorSubject containing the active users on
+   *                   the app
+   * usersObservable - Observable version of the subject for subscribing to
+   * currentUser     - Observable of the user who is currently logged in
+   */
   private apiBase: string = 'api/users';
-  public currentUser: User;
-
   private usersSubject: BehaviorSubject<User[]>;
   private usersObservable: Observable<User[]>;
 
-  constructor(private http: HttpClient,
-    private router: Router) { 
+  constructor(private http: HttpClient) { 
       this.usersSubject = new BehaviorSubject([]);
       this.usersObservable = this.usersSubject.asObservable();
 
@@ -49,22 +53,23 @@ export class UserService {
   }
 
   /**
+   * Return the current user observable to the calling routine
+   */
+  getCurrentUser() {
+    return JSON.parse(localStorage.getItem('user'));
+  }
+
+  /**
    * Given a username and a password, requests the user's account 
    * from the server in an attempt to log in to the user's account
    * @param username The username for the account being requested
    * @param password The unhashed password for the account being requested
    */
-  login(username: string, password: string) {
+  login(username: string, password: string): Observable<User> {
     const endpoint: string = `${environment.serverBase}${this.apiBase}/login`;
     const login = { username, password };
 
-    // Make call to server
-    this.http.post(endpoint, login)
-    .subscribe((user: User) => {
-      this.currentUser = user;
-      localStorage.setItem('username', this.currentUser.userName);
-      this.router.navigate(['/lobby']);
-    }, (err) => { console.log(err) });
+    return this.http.post<User>(endpoint, login);
   }
 
   /**
@@ -73,20 +78,14 @@ export class UserService {
    * @param password The password for the new user
    * @returns An Observable containing the newly created user
    */
-  createAccount(username: string, password: string) {
+  createAccount(username: string, password: string): Observable<User> {
     const endpoint: string = `${environment.serverBase}${this.apiBase}`;
     let newUser = {
       username: username,
       password: password
     };
 
-    this.http.post<User>(endpoint, newUser)
-    .subscribe((user: User) => {
-      this.currentUser = user;
-      this.router.navigate(['/lobby']);
-    }, (err) => {
-      console.log(err);
-    });
+    return this.http.post<User>(endpoint, newUser);
   }
 
   /**
