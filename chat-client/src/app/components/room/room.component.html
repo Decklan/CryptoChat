@@ -5,8 +5,8 @@
     <div class="col-10 message-log">
       <ul class="list-group-flush">
         <li *ngFor="let message of messages" class="list-group-item bg-light">
-          <div class="row">
-            <div class="col-1"><h5 class="lead">{{ message.from }}:</h5></div>
+          <div class="row" *ngIf="roomMessage(message.to)">
+            <div class="col-1"><h5 class="lead text-center">{{ message.from }}:</h5></div>
             <div class="col-11">{{ message.messageText }}</div>
           </div>
         </li>

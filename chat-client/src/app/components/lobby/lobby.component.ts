@@ -139,8 +139,15 @@ export class LobbyComponent implements OnInit, OnDestroy {
    * @param id The id of the room we are removing
    */
   removeRoom(id: number) {
+    let i: number;
+    for (i = 0; i < this.rooms.length; i++) {
+      if (this.rooms[i].id === id)
+        this.rooms.splice(i, 1);
+    }
+
     this.roomService.removeRoomById(id)
     .subscribe((data) => {
+      console.log(data);
       this.roomService.updateObservableState(this.rooms); // Update the list of rooms
     }, (err) => { console.log(err) });
   }
@@ -164,9 +171,11 @@ export class LobbyComponent implements OnInit, OnDestroy {
 
     let message: Message = new Message();
     message.from = this.currentUser.userName;
+    message.to = new Array();
+    message.to = to;
     message.messageText = messageText;
 
-    this.socketService.broadcastMessage(to, message);
+    this.socketService.broadcastMessage(message);
   }
 
   /**

@@ -91,12 +91,8 @@ export class SocketService {
    * @param to The list of room ids to send the message to
    * @param message The message to send to each of the rooms
    */
-  broadcastMessage(to: number[], message: Message) {
-    let broadcast = {
-      to,
-      message
-    }
-    this.socket.emit('broadcast', broadcast);
+  broadcastMessage(message: Message) {
+    this.socket.emit('broadcast', message);
   }
 
   // Join a specific room number by emitting the join event to the server

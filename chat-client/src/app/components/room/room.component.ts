@@ -60,9 +60,21 @@ export class RoomComponent implements OnInit, OnDestroy {
   subscribeToMessages() {
     // Subscribe to the messaging observable to receive messages
     this.messageSubscription = this.socketService.getMessages()
-    .subscribe((message: Message) => {
-      this.messages.push(message);
+    .subscribe((messages: Message[]) => {
+      this.messages = messages;
     });
+  }
+
+  /**
+   * Checks to see if a message was sent to this room
+   * @param to The list of ids for the rooms the message is sent to
+   */
+  roomMessage(to: number[]) {
+    for (let id of to) {
+      if (this.currentRoom.id === id)
+        return true;
+    }
+    return false;
   }
 
   /**
@@ -72,7 +84,10 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.memberSubscription = this.socketService.getRoomMembers()
     .subscribe((members: Member[]) => {
       console.log('RoomComponent: getMembers() called.');
-      this.roomMembers = members;
+      for (let member of members) {
+        if (member.roomId === this.currentRoom.id)
+          this.roomMembers.push(member);
+      }
     }, (err) => { console.log(err) });
   }
 
@@ -109,6 +124,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     // Create the message
     let message: Message = new Message();
     message.from = user.userName;
+    message.to = [this.currentRoom.id];
     message.messageText = text;
 
     // Reset the form and send the message

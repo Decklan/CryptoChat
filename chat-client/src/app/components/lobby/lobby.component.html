@@ -13,7 +13,14 @@
       <h4 class="text-center text-white mb-3">Rooms</h4>
       <ul class="list-group-flush p-0" *ngIf="rooms">
         <li class="list-group-item room-list" *ngFor="let room of rooms" style="background-color: gray;">
-          <h4 (click)="setRoom(room)" class="text-center text-white">{{ room.roomName }}</h4>
+          <h4 (click)="setRoom(room)" class="text-center text-white">
+            {{ room.roomName }}
+            <button type="button" class="btn btn-secondary" *ngIf="room.ownerId === currentUser.id" 
+            (click)="removeRoom(room.id)">
+            &times;
+          </button>
+          </h4>
+          
         </li>
       </ul>
 
@@ -51,8 +58,6 @@
             <b>
               WARNING: The views and opinions expressed by the users in this application are solely those of the individual users.
               Anything said in this application does not represent the views of anyone involved in the development of this application.
-              That being said, if you enjoy the hilarity of the internet and understand that you may be triggered during the use of
-              this application, enjoy!
             </b>
           </p>
         </div>

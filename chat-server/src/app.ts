@@ -23,6 +23,7 @@ import {
 
 // Models
 import { RoomMember } from './models/RoomMember';
+import { Message } from './models/Message';
 
 const PORT = process.env.PORT || 8081;
 const express = require('express');
@@ -86,6 +87,7 @@ createConnection().then(() => {
      * so it can be appropriately emitted back to the client
      */
     let members: RoomMember[] = [];
+    let messages: Message[] = [];
 
     io.on('connection', (socket) => {
         console.log('A user has connected.');
@@ -97,7 +99,6 @@ createConnection().then(() => {
         socket.on('join', (member: RoomMember) => {
             // Set the global roomId and join the room
             roomId = member.roomId;
-            socket.join(roomId);
 
             // Add member pairing to members array
             currentMember = member;
@@ -109,8 +110,10 @@ createConnection().then(() => {
                     memberInRoom = true;
             }
 
-            if (!memberInRoom)
+            if (!memberInRoom) {
                 members.push(currentMember);
+                socket.join(roomId);
+            }
 
             // Emit the list of members back to the client
             io.emit('memberJoin', members);
@@ -134,18 +137,15 @@ createConnection().then(() => {
         });
 
         // Receive and emit a message to sockets in a specific room
-        socket.on('message', (data) => {
-            io.sockets.in(roomId).emit('message', data);
+        socket.on('message', (messageData) => {
+            messages.push(messageData);
+            io.emit('message', messages);
         });
 
         // Receive and emit a message to be broadcasted to multiple rooms
         socket.on('broadcast', (broadcastData) => {
-            let recipients: number[] = broadcastData.to;
-            
-            // Emit a message event for each recipient of the message
-            for (let recipient of recipients) {
-                io.sockets.in(recipient).emit('message', broadcastData.message);
-            }
+            messages.push(broadcastData);
+            io.emit('message', messages);
         });
 
         // When a user disconnects
