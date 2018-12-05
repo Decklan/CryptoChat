@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 
 // Models
 import { Message } from 'src/app/models/Message';
@@ -9,6 +10,7 @@ import { Member } from 'src/app/models/Member';
 
 // Services
 import { SocketService } from 'src/app/services/socket.service';
+import { RoomService } from 'src/app/services/room.service';
 
 @Component({
   selector: 'app-room',
@@ -22,7 +24,8 @@ export class RoomComponent implements OnInit, OnDestroy {
    * messageSubscription - Observable subscription to messaging in the room
    * memberSubscription - Observable subscription to the users in the room
    */
-  @Input() public currentRoom: Room;
+  private id: number;
+  public currentRoom: Room;
   public roomMembers: Member[] = [];
   private messageSubscription;
   private memberSubscription;
@@ -33,14 +36,21 @@ export class RoomComponent implements OnInit, OnDestroy {
   // Array to store messages in
   public messages: Message[] = [];
 
-  constructor(private socketService: SocketService) { }
+  constructor(private socketService: SocketService,
+    private roomService: RoomService,
+    private route: ActivatedRoute) {
+      // Get the id from the route params
+      this.route.params.subscribe(p => {
+        this.id = +p['id'];
+      });
+   }
 
   /**
    * Handle any logic that needs to be accomplished right before
    * presenting the view to the user.
    */
   ngOnInit() {
-    this.joinRoom();
+    this.getRoom();
 
     // Create the message from and its controls
     this.messageForm = new FormGroup({
@@ -52,6 +62,21 @@ export class RoomComponent implements OnInit, OnDestroy {
 
     this.subscribeToMessages();
     this.getMembers();
+  }
+
+  /**
+   * Gets the room details for the room the user just joined
+   */
+  getRoom() {
+    this.roomService.getAllRooms()
+    .subscribe((rooms: Room[]) => {
+      for (let room of rooms) {
+        if (room.id === this.id) {
+          this.currentRoom = room;
+          this.joinRoom();
+        }
+      }
+    }, (err) => { console.log(err) });
   }
 
   /**

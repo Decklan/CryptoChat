@@ -10,7 +10,7 @@
         <a class="nav-link logout" (click)="logout()">Logout</a>
       </div>
 
-      <h4 class="text-center text-white mb-3">Rooms</h4>
+      <!-- <h4 class="text-center text-white mb-3">Rooms</h4>
       <ul class="list-group-flush p-0" *ngIf="rooms">
         <li class="list-group-item room-list" *ngFor="let room of rooms" style="background-color: gray;">
           <h4 (click)="setRoom(room)" class="text-center text-white">
@@ -22,9 +22,9 @@
           </h4>
           
         </li>
-      </ul>
+      </ul> -->
 
-      <h4 class="text-center text-white room-list mb-3" (click)="setRoom(null)">Go to Lobby</h4>
+      <!-- <h4 class="text-center text-white room-list mb-3" (click)="setRoom(null)">Go to Lobby</h4> -->
 
       <button type="button" class="btn btn-md btn-block btn-success mt-2 mb-2"
         data-toggle="modal" data-target="#roomModal">
@@ -40,31 +40,33 @@
     </div>
 
     <div class="col-md-10 p-0">
-      <div *ngIf="!room">
-        <div class="container-fluid jumbotron mb-10">
-          <h3 class="display-3 text-center text-primary">Welcome to CryptoChat</h3>
-          <p class="text-center">To start chatting, join a room from the list of rooms in the sidebar.</p>
-          <p class="text-center">You can also send a message to multiple, specific rooms by clicking the broadcast button below.</p>
-          <div class="text-center">
-            <button type="button" class="btn btn-primary text-center ml-auto mr-auto"
-              data-toggle="modal" data-target="#broadcastModal">
-              Broadcast
-            </button>
-          </div>
+      <div class="container-fluid jumbotron pt-2 pb-4 mb-10">
+        <h3 class="display-3 text-center text-primary">Welcome to C.H.A.T.</h3>
+        <h3 class="display-3 text-center text-primary">(C)ooperative (H)ilariously (A)wesome (T)alking</h3>
+        <p class="text-center">To start chatting, join a room from the list of rooms below.</p>
+        <p class="text-center">You can also send a message to multiple, specific rooms by clicking the broadcast button below.</p>
+        <div class="text-center">
+          <button type="button" class="btn btn-primary text-center ml-auto mr-auto"
+            data-toggle="modal" data-target="#broadcastModal">
+            Broadcast
+          </button>
         </div>
+      </div>
 
-        <div class="container">
-          <p class="lead text-danger">
-            <b>
-              WARNING: The views and opinions expressed by the users in this application are solely those of the individual users.
-              Anything said in this application does not represent the views of anyone involved in the development of this application.
-            </b>
-          </p>
-        </div>
+      <div class="container" *ngIf="rooms">
+        <ul class="list-group">
+          <li class="list-group-item" *ngFor="let room of rooms">
+            <div class="row">
+              <div class="col-2" routerLink="/room/{{room.id}}">{{ room.roomName }}</div>
+              <div class="col-8">{{ room.description }} </div>
+              <div class="col-2">
+                <button type="button" class="btn btn-danger btn-block">Remove</button>
+              </div>
+            </div>
+          </li>
+        </ul>
       </div>
-      <div *ngIf="room">
-        <app-room [currentRoom]="room"></app-room>
-      </div>
+
     </div>
   </div>
 </div>

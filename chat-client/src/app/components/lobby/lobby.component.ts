@@ -32,7 +32,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
   public activeUsers: User[];
   public currentUser: User;
   public roomForm: FormGroup;
-  public room: Room;
+  // public room: Room;
 
   // Form for broadcasting a message
   public broadcastForm: FormGroup;
@@ -84,13 +84,13 @@ export class LobbyComponent implements OnInit, OnDestroy {
     this.activeUserSubscription.unsubscribe();
   }
 
-  /**
-   * Sets the id of the room we are navigating to
-   * @param id The id of the room to navigate to
-   */
-  setRoom(room: Room) {
-    this.room = room;
-  }
+  // /**
+  //  * Sets the id of the room we are navigating to
+  //  * @param id The id of the room to navigate to
+  //  */
+  // setRoom(room: Room) {
+  //   this.room = room;
+  // }
 
   /**
    * Creates a new room and sends it to the server then updates the observable state
