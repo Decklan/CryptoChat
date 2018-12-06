@@ -10,27 +10,6 @@
         <a class="nav-link logout" (click)="logout()">Logout</a>
       </div>
 
-      <!-- <h4 class="text-center text-white mb-3">Rooms</h4>
-      <ul class="list-group-flush p-0" *ngIf="rooms">
-        <li class="list-group-item room-list" *ngFor="let room of rooms" style="background-color: gray;">
-          <h4 (click)="setRoom(room)" class="text-center text-white">
-            {{ room.roomName }}
-            <button type="button" class="btn btn-secondary" *ngIf="room.ownerId === currentUser.id" 
-            (click)="removeRoom(room.id)">
-            &times;
-          </button>
-          </h4>
-          
-        </li>
-      </ul> -->
-
-      <!-- <h4 class="text-center text-white room-list mb-3" (click)="setRoom(null)">Go to Lobby</h4> -->
-
-      <button type="button" class="btn btn-md btn-block btn-success mt-2 mb-2"
-        data-toggle="modal" data-target="#roomModal">
-        <b>New Room</b>
-      </button>
-
       <h4 class="text-center text-white mb-3">Active Users</h4>
       <ul class="list-group-flush p-0" *ngIf="activeUsers">
         <li class="list-group-item" *ngFor="let user of activeUsers" style="background-color: gray;">
@@ -41,10 +20,9 @@
 
     <div class="col-md-10 p-0">
       <div class="container-fluid jumbotron pt-2 pb-4 mb-10">
-        <h3 class="display-3 text-center text-primary">Welcome to C.H.A.T.</h3>
-        <h3 class="display-3 text-center text-primary">(C)ooperative (H)ilariously (A)wesome (T)alking</h3>
+        <h3 class="display-3 text-center text-primary">Welcome to CHAT</h3>
         <p class="text-center">To start chatting, join a room from the list of rooms below.</p>
-        <p class="text-center">You can also send a message to multiple, specific rooms by clicking the broadcast button below.</p>
+        <p class="text-center">You can also send a message to multiple, specific rooms by clicking the broadcast button.</p>
         <div class="text-center">
           <button type="button" class="btn btn-primary text-center ml-auto mr-auto"
             data-toggle="modal" data-target="#broadcastModal">
@@ -53,14 +31,23 @@
         </div>
       </div>
 
-      <div class="container" *ngIf="rooms">
-        <ul class="list-group">
+      <div class="container">
+        <button type="button" class="btn btn-md btn-block btn-success mt-2 mb-2"
+          data-toggle="modal" data-target="#roomModal">
+          <b>New Room</b>
+        </button>
+        <ul class="list-group"  *ngIf="rooms">
           <li class="list-group-item" *ngFor="let room of rooms">
             <div class="row">
-              <div class="col-2" routerLink="/room/{{room.id}}">{{ room.roomName }}</div>
-              <div class="col-8">{{ room.description }} </div>
-              <div class="col-2">
-                <button type="button" class="btn btn-danger btn-block">Remove</button>
+              <div class="col-2">{{ room.roomName }}</div>
+              <div class="col-7">{{ room.description }} </div>
+              <div class="col-3">
+                <div class="btn-group">
+                    <a type="button" class="btn btn-success" routerLink="/room/{{room.id}}">Join Room</a>
+                    <button type="button" class="btn btn-danger" (click)="removeRoom(room.id)" *ngIf="room.ownerId === currentUser.id">
+                      Remove
+                    </button>
+                </div>
               </div>
             </div>
           </li>
@@ -95,8 +82,8 @@
       </div>
 
       <div class="modal-footer">
-        <button type="submit" class="btn btn-success" data-dismiss="modal" (click)="createRoom()"
-          [disabled]="roomForm.invalid">
+        <button type="submit" class="btn btn-success" data-dismiss="modal" [disabled]="roomForm.invalid"
+          (click)="createRoom()">
           Create Room
         </button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">

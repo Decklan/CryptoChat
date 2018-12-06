@@ -1,45 +1,55 @@
-<div class="container-fluid pl-0" id="room-container">
-  <h4 class="display-4 text-primary text-center mb-0" *ngIf="currentRoom">{{ currentRoom.roomName }}</h4>
+<div class="container-fluid p-0" id="room-container">
+  <div class="row">
 
-  <div class="row bg-secondary bg-light main-content ml-1" *ngIf="currentRoom">
-    <div class="col-10 message-log">
-      <ul class="list-group-flush">
-        <li *ngFor="let message of messages" class="list-group-item bg-light">
-          <div class="row" *ngIf="roomMessage(message.to)">
-            <div class="col-1"><h5 class="lead text-center">{{ message.from }}:</h5></div>
-            <div class="col-11">{{ message.messageText }}</div>
-          </div>
-        </li>
-      </ul>
-    </div>
-    <div class="col-2 bg-secondary message-log">
-      <h4 class="lead text-center text-white mt-1">Currently Chatting</h4>
+    <div class="col-2 user-column bg-secondary p-0">
+      <h4 class="text-center text-white bg-dark mb-2 pt-3 pb-3">
+        {{ currentUser.userName }}
+      </h4>
 
-      <ul class="list-group-flush users" *ngIf="roomMembers">
-        <li class="list-group-item bg-secondary user" *ngFor="let member of roomMembers">
+      <h5 class="text-white text-center">Users in {{ currentRoom.roomName }}</h5>
+      <ul class="list-group-flush p-0" *ngIf="roomMembers">
+        <li class="list-group-item bg-secondary" *ngFor="let member of roomMembers">
           <h4 class="text-center text-white">{{ member.user.userName }}</h4>
         </li>
       </ul>
     </div>
-  </div>
 
-  <div class="row mt-2 ml-1">
-    <div class="message-input">
-      <form [formGroup]="messageForm" >
-        <div class="form-group">
-          <div class="row">
-            <div class="col-10">
-              <input type="text" class="form-control" formControlName="messageText" placeholder="Enter your message">
+    <div class="col-10 content-column pl-0 pr-0" *ngIf="currentRoom">
+
+      <div class="jumbotron pt-2 pb-2 mb-0">
+        <h4 class="display-4 text-primary text-center">{{ currentRoom.roomName }}</h4>
+        <p class="text-primary text-center lead">{{ currentRoom.description }}</p>
+      </div>
+
+      <div class="row message-content bg-secondary bg-light ml-auto mr-auto">
+        <ul class="list-group-flush pl-0" id="message-list">
+          <li *ngFor="let message of messages" class="list-group-item ml-0 bg-light">
+            <div class="row">
+              <div class="col-1"><h5 class="lead text-center">{{ message.from }}:</h5></div>
+              <div class="col-11">{{ message.messageText }}</div>
             </div>
-            <div class="col-2">
-              <button type="button" class="btn btn-primary" [disabled]="messageForm.invalid"
-                (click)="sendMessage()">
-                Send
-              </button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="row message-input bg-secondary bg-dark ml-auto mr-auto pt-3">
+        <div class="col-10">
+          <form [formGroup]="messageForm">
+            <div class="form-group">
+              <input type="text" class="form-control" formControlName="messageText" placeholder="Enter a message...">
             </div>
-          </div>
+          </form>
         </div>
-      </form>
+
+        <div class="col-2">
+          <button type="button" class="btn btn-primary btn-block" [disabled]="messageForm.invalid"
+            (click)="sendMessage()">
+            Send
+          </button>
+        </div>
+      </div>
+
     </div>
+
   </div>
 </div>

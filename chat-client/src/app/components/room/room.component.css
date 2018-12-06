@@ -3,26 +3,29 @@
     height: 100vh;
 }
 
-.users {
+.user-column {
     width: 100%;
+    height: 100vh;
 }
 
-.user {
+.content-column {
     width: 100%;
+    height: 100vh;
 }
 
-.main-content {
+.message-content {
     width: 100%;
-    height: 85vh;
-}
-
-.message-log {
-    width: 100%;
-    height: 85vh;
+    height: 75vh;
 }
 
 .message-input {
-    position: absolute;
     width: 100%;
-    height: 5vh;
+    height: 10vh;
+}
+
+#message-list {
+    width: 100%;
+    max-height: 75vh;
+    overflow: hidden;
+    overflow-y: auto;
 }

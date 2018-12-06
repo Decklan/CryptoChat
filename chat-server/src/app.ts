@@ -87,7 +87,7 @@ createConnection().then(() => {
      * so it can be appropriately emitted back to the client
      */
     let members: RoomMember[] = [];
-    let messages: Message[] = [];
+    // let messages: Message[] = [];
 
     io.on('connection', (socket) => {
         console.log('A user has connected.');
@@ -99,8 +99,9 @@ createConnection().then(() => {
         socket.on('join', (member: RoomMember) => {
             // Set the global roomId and join the room
             roomId = member.roomId;
+            socket.join(roomId);
 
-            // Add member pairing to members array
+            // Set the currentMember to hang on to it
             currentMember = member;
             
             // Check if the member is already in the room (page refresh)
@@ -112,7 +113,6 @@ createConnection().then(() => {
 
             if (!memberInRoom) {
                 members.push(currentMember);
-                socket.join(roomId);
             }
 
             // Emit the list of members back to the client
@@ -138,14 +138,19 @@ createConnection().then(() => {
 
         // Receive and emit a message to sockets in a specific room
         socket.on('message', (messageData) => {
-            messages.push(messageData);
-            io.emit('message', messages);
+            let to: number = messageData.to[0];
+            io.to(to).emit('message', messageData);
         });
 
         // Receive and emit a message to be broadcasted to multiple rooms
         socket.on('broadcast', (broadcastData) => {
-            messages.push(broadcastData);
-            io.emit('message', messages);
+            // messages.push(broadcastData);
+            let roomNumbers: number[] = broadcastData.to;
+
+            // Emit to each room chosen in the message's to field
+            for (let roomId of roomNumbers) {
+                io.to(roomId).emit('message', broadcastData);
+            }
         });
 
         // When a user disconnects

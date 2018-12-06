@@ -11,6 +11,7 @@ import { Member } from 'src/app/models/Member';
 // Services
 import { SocketService } from 'src/app/services/socket.service';
 import { RoomService } from 'src/app/services/room.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-room',
@@ -19,12 +20,14 @@ import { RoomService } from 'src/app/services/room.service';
 })
 export class RoomComponent implements OnInit, OnDestroy {
   /**
+   * id          - The id of the room we have entered
    * currentRoom - The room that the user is currently in
    * roomMembers - List of users who are currently in the room
    * messageSubscription - Observable subscription to messaging in the room
    * memberSubscription - Observable subscription to the users in the room
    */
   private id: number;
+  public currentUser: User;
   public currentRoom: Room;
   public roomMembers: Member[] = [];
   private messageSubscription;
@@ -38,6 +41,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   constructor(private socketService: SocketService,
     private roomService: RoomService,
+    private userService: UserService,
     private route: ActivatedRoute) {
       // Get the id from the route params
       this.route.params.subscribe(p => {
@@ -51,6 +55,7 @@ export class RoomComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
     this.getRoom();
+    this.currentUser = this.userService.getCurrentUser();
 
     // Create the message from and its controls
     this.messageForm = new FormGroup({
@@ -85,21 +90,9 @@ export class RoomComponent implements OnInit, OnDestroy {
   subscribeToMessages() {
     // Subscribe to the messaging observable to receive messages
     this.messageSubscription = this.socketService.getMessages()
-    .subscribe((messages: Message[]) => {
-      this.messages = messages;
+    .subscribe((message: Message) => {
+      this.messages.push(message);
     });
-  }
-
-  /**
-   * Checks to see if a message was sent to this room
-   * @param to The list of ids for the rooms the message is sent to
-   */
-  roomMessage(to: number[]) {
-    for (let id of to) {
-      if (this.currentRoom.id === id)
-        return true;
-    }
-    return false;
   }
 
   /**
@@ -108,6 +101,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   getMembers() {
     this.memberSubscription = this.socketService.getRoomMembers()
     .subscribe((members: Member[]) => {
+      this.roomMembers = [];
       console.log('RoomComponent: getMembers() called.');
       for (let member of members) {
         if (member.roomId === this.currentRoom.id)
