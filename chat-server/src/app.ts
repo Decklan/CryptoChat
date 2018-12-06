@@ -87,7 +87,6 @@ createConnection().then(() => {
      * so it can be appropriately emitted back to the client
      */
     let members: RoomMember[] = [];
-    // let messages: Message[] = [];
 
     io.on('connection', (socket) => {
         console.log('A user has connected.');

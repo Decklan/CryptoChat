@@ -1,13 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+// AuthGuard for protecting routes unless a user is logged in
 import { AuthGuard } from './guards/auth.guard';
 
-// My components
+// Components used for routing to/from
 import { LoginComponent } from './components/login/login.component';
 import { LobbyComponent } from './components/lobby/lobby.component';
 import { RoomComponent } from './components/room/room.component';
 
+// Array of valid application routes and their corresponding components
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
@@ -21,7 +23,6 @@ const routes: Routes = [
   ],
   exports: [
     RouterModule
-  ],
-  declarations: []
+  ]
 })
 export class AppRoutingModule { }

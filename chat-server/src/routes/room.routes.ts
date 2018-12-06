@@ -108,20 +108,22 @@ export function GetRoomById(req: Request, res: Response) {
  */
 export function RemoveRoomById(req: Request, res: Response) {
     const roomRepository = getConnection().getRepository(Room);
-    
-    roomRepository.delete({
-        where: { id: req.params.id }
+    console.log(req.params.id);
+
+    roomRepository.remove({
+        id: req.params.id
     })
-    .then(() => {
+    .then((room) => {
+        console.log(room);
         res.status(200);
         res.send({
             message: 'The room was successfully removed.'
-        })
-    })
+        });
+    }) 
     .catch((err) => {
         res.status(err.statusCode);
         res.send({
-            error: 'There was an issue removing the room from the database.'
-        })
+            error: 'There was an issue removing the room.'
+        });
     });
 }

@@ -20,11 +20,12 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class RoomComponent implements OnInit, OnDestroy {
   /**
-   * id          - The id of the room we have entered
-   * currentRoom - The room that the user is currently in
-   * roomMembers - List of users who are currently in the room
+   * id                  - The id of the room we have entered
+   * currentUser         - The currently logged in user
+   * currentRoom         - The room that the user is currently in
+   * roomMembers         - List of users who are currently in the room
    * messageSubscription - Observable subscription to messaging in the room
-   * memberSubscription - Observable subscription to the users in the room
+   * memberSubscription  - Observable subscription to the users in the room
    */
   private id: number;
   public currentUser: User;

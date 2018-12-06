@@ -1,16 +1,22 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
-
 import { environment } from 'src/environments/environment';
 
+// Models
 import { Room } from './../models/Room';
-
 
 @Injectable({
   providedIn: 'root'
 })
 export class RoomService {
+  /**
+   * apiBase         - Adds to the endpoint to get to the appropriate api endpoint
+   * roomsSubject    - BehaviorSubject acts as both an observable and an observer
+   *                   while also providing an initial value for its state.
+   * roomsObservable - The observable version of the BehaviorSubject for users to 
+   *                   subscribe/unsubscribe to/from
+   */
   private apiBase: string = 'api/rooms';
   private roomsSubject: BehaviorSubject<Room[]>;
   private roomsObservable: Observable<Room[]>;
@@ -18,7 +24,6 @@ export class RoomService {
   constructor(private http: HttpClient) { 
     this.roomsSubject = new BehaviorSubject([]);
     this.roomsObservable = this.roomsSubject.asObservable();
-
     this.roomsObservable = this.fetchAllRooms();
   }
 
@@ -33,7 +38,7 @@ export class RoomService {
   /**
    * Sends a new room to create to the server
    * @param room The new room to create in the database
-   * @returns The newly created room
+   * @returns The newly created room observable
    */
   createNewRoom(room: Room): Observable<Room> {
     const endpoint: string = `${environment.serverBase}${this.apiBase}`;
@@ -41,7 +46,7 @@ export class RoomService {
   }
 
   /**
-   * Return the observable of rooms
+   * Return the observable of rooms from the service
    */
   getAllRooms(): Observable<Room[]> {
     return this.roomsObservable;
@@ -67,8 +72,9 @@ export class RoomService {
   }
 
   /**
-   * Pushes a new value to the roomsObservable
-   * @param rooms The new list of rooms to push to the BehaviorSubject
+   * Pushes a new value to the roomsObservable so that subscribed users get
+   * the latest value of the observable
+   * @param rooms The updated list of rooms to push to the BehaviorSubject
    */
   updateObservableState(rooms: Room[]) {
     this.roomsSubject.next(rooms);

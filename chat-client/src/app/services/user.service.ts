@@ -1,9 +1,9 @@
 import { environment } from './../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
 import { Observable, BehaviorSubject } from 'rxjs';
 
+// Models
 import { User } from '../models/User';
 
 @Injectable({
@@ -15,7 +15,6 @@ export class UserService {
    * usersSubject    - BehaviorSubject containing the active users on
    *                   the app
    * usersObservable - Observable version of the subject for subscribing to
-   * currentUser     - Observable of the user who is currently logged in
    */
   private apiBase: string = 'api/users';
   private usersSubject: BehaviorSubject<User[]>;
@@ -24,7 +23,6 @@ export class UserService {
   constructor(private http: HttpClient) { 
       this.usersSubject = new BehaviorSubject([]);
       this.usersObservable = this.usersSubject.asObservable();
-
       this.usersObservable = this.fetchActiveUsers();
   }
 
@@ -64,6 +62,7 @@ export class UserService {
    * from the server in an attempt to log in to the user's account
    * @param username The username for the account being requested
    * @param password The unhashed password for the account being requested
+   * @returns The user who successfully logged in or error information
    */
   login(username: string, password: string): Observable<User> {
     const endpoint: string = `${environment.serverBase}${this.apiBase}/login`;

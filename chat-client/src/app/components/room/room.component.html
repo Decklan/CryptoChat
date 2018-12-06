@@ -1,4 +1,4 @@
-<div class="container-fluid p-0" id="room-container">
+<div class="container-fluid p-0" id="room-container" *ngIf="currentRoom">
   <div class="row">
 
     <div class="col-2 user-column bg-secondary p-0">
@@ -14,7 +14,7 @@
       </ul>
     </div>
 
-    <div class="col-10 content-column pl-0 pr-0" *ngIf="currentRoom">
+    <div class="col-10 content-column pl-0 pr-0">
 
       <div class="jumbotron pt-2 pb-2 mb-0">
         <h4 class="display-4 text-primary text-center">{{ currentRoom.roomName }}</h4>
