@@ -19,7 +19,13 @@ export class LoginComponent implements OnInit {
   public welcome: string = 'CryptoChat';
 
   constructor(private userService: UserService,
-    private router: Router) { }
+    private router: Router) { 
+      // If the user exited without logging out just route them to the lobby
+      let user: User = this.userService.getCurrentUser();
+      if (user) {
+        this.router.navigate(['/lobby']);
+      }
+    }
 
   ngOnInit() {
     this.loginForm = new FormGroup({

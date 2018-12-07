@@ -26,13 +26,11 @@ export class LobbyComponent implements OnInit, OnDestroy {
    * currentUser - The user currently logged in to the app
    * roomForm    - Form for collecting room info when creating a
    *               new room
-   * room        - The room the user is currently chatting in
    */
   public rooms: Room[];
   public activeUsers: User[];
   public currentUser: User;
   public roomForm: FormGroup;
-  // public room: Room;
 
   // Form for broadcasting a message
   public broadcastForm: FormGroup;
@@ -83,14 +81,6 @@ export class LobbyComponent implements OnInit, OnDestroy {
     this.roomSubscription.unsubscribe();
     this.activeUserSubscription.unsubscribe();
   }
-
-  // /**
-  //  * Sets the id of the room we are navigating to
-  //  * @param id The id of the room to navigate to
-  //  */
-  // setRoom(room: Room) {
-  //   this.room = room;
-  // }
 
   /**
    * Creates a new room and sends it to the server then updates the observable state
@@ -185,6 +175,19 @@ export class LobbyComponent implements OnInit, OnDestroy {
     this.currentUser.isActive = false;
     this.userService.updateUser(this.currentUser)
     .subscribe((user: User) => {
+      localStorage.removeItem('user');
+      this.socketService.disconnect();
+      this.router.navigate(['/']);
+    }, (err) => { console.log(err) });
+  }
+
+  /**
+   * Delete your account if you dont want one anymore...
+   * But why would you do that because then you cant CHAT!!!
+   */
+  removeAccount() {
+    this.userService.removeUser(this.currentUser)
+    .subscribe(() => {
       localStorage.removeItem('user');
       this.socketService.disconnect();
       this.router.navigate(['/']);

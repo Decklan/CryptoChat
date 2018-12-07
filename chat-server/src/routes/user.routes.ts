@@ -214,10 +214,15 @@ export function RemoveUserById(req: Request, res: Response) {
     .then((user) => {
         userRepository.remove(user);
         res.status(200);
-        res.end();
+        res.send({
+            message: 'User successfully deleted.'
+        });
     })
     .catch((err) => {
-        console.log(err);
+        res.status(err.statusCode);
+        res.send({
+            error: 'There was an issue removing the user.'
+        });
     })
 }
 
