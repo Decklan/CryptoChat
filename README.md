@@ -16,6 +16,7 @@ The backend server, RESTful API, and database is implemented with:
 #### Features
 Users can create an account using a username and password
 * Passwords are stored securely using password hashing w/ a salt
+* If you're lame you can also delete your account.. but who would want to do that?
 
 Users can login and logout of their account when using the application
 * Frontend routes throughout the application are guarded to ensure that
