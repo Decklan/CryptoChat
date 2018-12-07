@@ -47,6 +47,8 @@ In order to run CHAT you must first ensure that you meet all of the prerequisite
 3. This project uses TypeScript as the underlying programming language. As such, in order to appropriately
    compile the backend server, you must ensure that you have TypeScript installed. Similar to installing the 
    Angular CLI, run the following command if you don't have TypeScript: **npm install -g typescript**
+4. Please ensure that you have Postgres installed on your system. You can follow download instructions on the
+   [postgres website](https://www.postgresql.org).
 
 ### Clone this repository
 With the prior prerequisites out of the way, clone this repository to your local machine. Once you have
