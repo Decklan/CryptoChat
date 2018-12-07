@@ -14,7 +14,6 @@ The backend server, RESTful API, and database is implemented with:
 * [Postgres](https://www.postgresql.org/)
 
 #### Features
-CryptoChat has the following features:
 Users can create an account using a username and password
 * Passwords are stored securely using password hashing w/ a salt
 
@@ -52,7 +51,8 @@ In order to run CHAT you must first ensure that you meet all of the prerequisite
 ### Clone this repository
 With the prior prerequisites out of the way, clone this repository to your local machine. Once you have
 cloned the repository, navigate to the folder where the project is cloned. You will notice that the project
-is split into two separate folders, chat-client and chat-server.
+is split into two separate folders, chat-client and chat-server. Inside of each of these folders, run the 
+following command to install relevant dependencies: **npm install**.
 
 #### chat-server
 To run the server, you must first compile the server code using TypeScripts compile command. Navigate into the
@@ -73,6 +73,8 @@ In order to use the application you must first register an account.
   the newly created account and direct you to the lobby page. 
 * Once in the lobby you can create rooms, and click the join room button to enter that room.
 * Once joined to a room, you can type your messages and click send to send them.
+* To logout of the application, from the lobby.. click on your usename in the upper left corner, then click logout.
+  This will log you out and redirect you back to the login page. 
 
 To test multiple users, open up a different browser and navigate to **localhost:4200/**. You can create another account,
 login, and join that same room to see messages passed back and forth.
